@@ -228,7 +228,7 @@ class DobotEnv(robot_env.RobotEnv):
 
         # Move end effector into position.
         #gripper_target = np.array([0.001, -1.4, -0.431 + self.gripper_extra_height]) + self.sim.data.get_site_xpos('dobot:grip')
-        gripper_target = np.array([0.8,0.76,0.37])
+        gripper_target = np.array([0.8,1,0.37])
         gripper_rotation = np.array([-1, 0., 0., 0])
         self.sim.data.set_mocap_pos('dobot:mocap', gripper_target)
         self.sim.data.set_mocap_quat('dobot:mocap', gripper_rotation)
