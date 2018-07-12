@@ -176,8 +176,8 @@ class DobotEnv(robot_env.RobotEnv):
         #     self.sim.data.set_joint_qpos('object0:joint', object_qpos)
 
         if self.has_object:
-            pos = np.array([0.8,0.685,0.22725])
-            size = np.array([0.335,0.165,0.21225]) - 0.025
+            pos = np.array([0.8,0.75,0.050])
+            size = np.array([0.280,0.100,0.035]) - 0.02
             up = pos + size
             low = pos - size
             object_xpos = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1])])
@@ -202,17 +202,17 @@ class DobotEnv(robot_env.RobotEnv):
         #     goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-0.15, 0.15, size=3)
         # return goal.copy()
 
-        pos = np.array([0.8,0.685,0.22725])
-        size = np.array([0.335,0.165,0.21225]) - 0.025
+        pos = np.array([0.8,0.75,0.050])
+        size = np.array([0.280,0.100,0.035]) - 0.02
         up = pos + size
         low = pos - size
         goal = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1]),0.032])
 
         if self.has_object:
             if self.target_in_the_air and self.np_random.uniform() < 0.5:
-                goal[2] += self.np_random.uniform(0, 0.25)
+                goal[2] = self.np_random.uniform(0, 0.085)
         else:
-            goal[2] += self.np_random.uniform(0, 0.25)
+            goal[2] = self.np_random.uniform(0, 0.085)
 
         return goal.copy()
         
@@ -237,7 +237,7 @@ class DobotEnv(robot_env.RobotEnv):
 
         # Extract information for sampling goals.
         #self.initial_gripper_xpos = self.sim.data.get_site_xpos('dobot:grip').copy()
-        self.initial_gripper_xpos = np.array([0.8, 0.685, 0.2975])
+        self.initial_gripper_xpos = np.array([0.8, 0.75, 0.2975])
         #print(self.initial_gripper_xpos)
         if self.has_object:
             self.height_offset = self.sim.data.get_site_xpos('object0')[2]
