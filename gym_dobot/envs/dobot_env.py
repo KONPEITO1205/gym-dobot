@@ -250,3 +250,18 @@ class DobotEnv(robot_env.RobotEnv):
             self.viewer.cam.type = const.CAMERA_FIXED
             img = self.viewer._read_pixels_as_in_window()
             return img
+
+    def set_object(self,pos):
+        self.goal = np.array([0.8,0.75,0.120])
+        if self.has_object:
+            assert len(pos)==3
+            object_xpos = pos
+            object_qpos = self.sim.data.get_joint_qpos('object0:joint')
+            assert object_qpos.shape == (7,)
+            object_qpos[:3] = object_xpos
+            object_qpos[2] += 0.032
+            self.sim.data.set_joint_qpos('object0:joint', object_qpos)
+    
+    def set_goal(self,pos):
+        assert len(pos)==3
+        self.goal = pos
