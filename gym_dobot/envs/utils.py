@@ -57,9 +57,9 @@ def mocap_set_action(sim, action):
         # pos = np.clip(pos,[0.6,0.55,0.18],[1.0,0.95,0.57])
         sim.data.mocap_pos[:] = pos
         sim.data.mocap_quat[:] = sim.data.mocap_quat + quat_delta
-        # theta = sim.data.get_joint_qpos('dobot:base_pan')
-        # if 'dobot:gripper_rot' in sim.model.joint_names:
-        #     sim.data.set_joint_qpos('dobot:gripper_rot', -theta)
+        theta = sim.data.get_joint_qpos('dobot:base_pan')
+        if 'dobot:gripper_rot' in sim.model.joint_names:
+            sim.data.set_joint_qpos('dobot:gripper_rot', 1.57-theta)
 
 
 def reset_mocap_welds(sim):

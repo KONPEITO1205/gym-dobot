@@ -18,7 +18,6 @@ def main(env,render,steps,clutter,rand_dom):
 
     while True:
         observation = env.reset()
-        env.set_object([0,0,0])
         for i in range(steps):
             if render:
                 env.render()
