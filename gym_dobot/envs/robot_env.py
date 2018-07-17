@@ -85,7 +85,7 @@ class RobotEnv(gym.GoalEnv):
             self.goal = self._sample_goal().copy()
         else:
             assert len(goal)==3
-            self.goal = np.array(pos)
+            self.goal = np.array(goal)
         obs = self._get_obs()
         return obs
 
