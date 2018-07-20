@@ -11,7 +11,7 @@ Currently consists of -
 
 The ClutterEnv variations add additonal blocks as clutter. The number of blocks can be changed by setting ```clutter_num``` while creating the environment.(Max=40,Default=20)
  
- Requires - 
+## Dependencies
   - python 3 (Tested on Python 3.6)
   - gym > 0.10.3
   - mujoco_py > 1.5
