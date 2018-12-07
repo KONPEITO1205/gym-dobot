@@ -30,12 +30,12 @@
 							<joint name="dobot:wrist_flex" type="hinge" pos="0 0 0" axis="1 0 0"/>
 
 							<body childclass="dobot:fetchGripper" name="dobot:l_gripper_link" pos="-0.1425 0 -0.09" euler="0 0 3.14">
-								<inertial diaginertia="1.2869 1.2236 0.9868" mass="0.3294" pos="0 0 0"></inertial>
+								<inertial diaginertia="5.2869 5.2236 5.9868" mass="0.3294" pos="0 0 0"></inertial>
 								<geom conaffinity="0" contype="0" mesh="dobot:l_gripper_link" name="dobot:l_gripper_link" pos = "0 0 0" rgba="0 0.5 0 0" material="gripper_mat"></geom>
 								<joint name="dobot:l_gripper_joint" type="slide" axis="1 0 0" limited="true" range="0 0.025"/>
 							</body>
 							<body childclass="dobot:fetchGripper" name="dobot:r_gripper_link" pos="-0.1025 0 -0.09" euler="0 0 3.14">
-								<inertial diaginertia="1.2869 1.2236 0.9868" mass="0.3294" pos="0 0 0"></inertial>
+								<inertial diaginertia="5.2869 5.2236 5.9868" mass="0.3294" pos="0 0 0"></inertial>
 								<geom conaffinity="0" contype="0" mesh="dobot:r_gripper_link" name="dobot:r_gripper_link" pos = "0 0 0" rgba="0 0.5 0 0" material="gripper_mat"></geom>
 								<joint name="dobot:r_gripper_joint" type="slide" axis="1 0 0" limited="true" range = "-0.025 0"/>
 							</body>

@@ -21,8 +21,8 @@ def main(env,render,steps,clutter,rand_dom):
         for i in range(steps):
             if render:
                 env.render()
-                #img = env.capture()
-                #imsave("image.png", img)
+                # img = env.capture()
+                # imsave("image.png", img)
             action = env.action_space.sample()
             observation, reward, done, info = env.step(action)
 

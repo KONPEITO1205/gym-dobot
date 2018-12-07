@@ -52,13 +52,34 @@ class DobotEnv(robot_env.RobotEnv):
     # GoalEnv methods
     # ----------------------------
 
-    def compute_reward(self, achieved_goal, goal, info):
+    # def compute_reward(self, achieved_goal, goal, info):
+    #     # Compute distance between goal and the achieved goal.
+    #     d = goal_distance(achieved_goal, goal)
+    #     if self.reward_type == 'sparse':
+    #         return -(d > self.distance_threshold).astype(np.float32)
+    #     else:
+    #         return -d
+
+    def compute_reward(self, achieved_goal, goal, info, obs, params):
         # Compute distance between goal and the achieved goal.
+        ret = 0
         d = goal_distance(achieved_goal, goal)
         if self.reward_type == 'sparse':
-            return -(d > self.distance_threshold).astype(np.float32)
+            ret = -(d > self.distance_threshold).astype(np.float32)
         else:
-            return -d
+            ret = -d
+        clutterNumber = 0
+        clutterPos = []
+        if params['clutter_reward'] == 1:
+            # List of positions of clutter boxes
+            object0Pos = np.array(obs[3:6])
+            for i in range(params['clutter_num']):
+                clutterPos.append(np.array(obs[3*i+25:3*i+28]))
+            for i in range(params['clutter_num']):
+                if np.linalg.norm(object0Pos[:2]-clutterPos[i][:2]) < 0.050:
+                    clutterNumber += 1
+        # print(clutterPos,'clutter')
+        return ret-clutterNumber
 
     # RobotEnv methods
     # ----------------------------
@@ -206,13 +227,13 @@ class DobotEnv(robot_env.RobotEnv):
         size = np.array([0.280,0.100]) - 0.02
         up = pos + size
         low = pos - size
-        goal = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1]),0.032])
+        goal = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1]),0.028])
 
         if self.has_object:
-            if self.target_in_the_air and self.np_random.uniform() < 0.5:
-                goal[2] = self.np_random.uniform(0.032, 0.085)
+            if self.target_in_the_air and self.np_random.uniform() < 1.0:
+                goal[2] = 0.148#self.np_random.uniform(0.028, 0.148)
         else:
-            goal[2] = self.np_random.uniform(0.032, 0.085)
+            goal[2] = self.np_random.uniform(0.028, 0.148)
 
         return goal.copy()
         

@@ -64,12 +64,16 @@ class RobotEnv(gym.GoalEnv):
         self.sim.step()
         self._step_callback()
         obs = self._get_obs()
+        obsTemp = obs['observation']
+        params = {}
+        params['clutter_reward'] = 0
+        params['clutter_num'] = 20
 
         done = False
         info = {
             'is_success': self._is_success(obs['achieved_goal'], self.goal),
         }
-        reward = self.compute_reward(obs['achieved_goal'], self.goal, info)
+        reward = self.compute_reward(obs['achieved_goal'], self.goal, info, obsTemp, params)
         return obs, reward, done, info
 
     def reset(self,goal=None):
@@ -167,4 +171,8 @@ class RobotEnv(gym.GoalEnv):
         """A custom callback that is called after stepping the simulation. Can be used
         to enforce additional constraints on the simulation state.
         """
+        pass
+
+    def _setPos(self, goal, obs, params):
+        """  Function to set the positions   """
         pass

@@ -2,12 +2,12 @@ import numpy as np
 from tkinter import *
 
 import gym
-from gym_dobot.envs import DobotPickAndPlaceEnv, DobotPushEnv
+from gym_dobot.envs import DobotPickAndPlaceEnv, DobotPushEnv, DobotReachEnv
 
 
 
-env = DobotPickAndPlaceEnv()
-#env = DobotPushEnv()
+#env = DobotPickAndPlaceEnv()
+env = DobotReachEnv()
 env.render()
 
 def update_env(event):
