@@ -96,6 +96,9 @@ class DobotEnv(robot_env.RobotEnv):
             self.sim.data.set_joint_qpos('dobot:r_gripper_joint', 0.)
             self.sim.forward()
         self.remote.setqpos(self.sim.data.qpos)
+        self.remote.setmocap(self.sim.data.mocap_pos[0],self.sim.data.mocap_quat[0])
+        print(self.sim.data.mocap_quat[0])
+
         
 
     def _set_action(self, action):
