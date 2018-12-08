@@ -116,12 +116,12 @@ class DobotEnv(robot_env.RobotEnv):
         grip_velp = self.sim.data.get_site_xvelp('dobot:grip') * dt
         robot_qpos, robot_qvel = utils.robot_get_obs(self.sim)
         if self.has_object:
-            object_pos = self.sim.data.get_site_xpos('object0')
+            object_pos = self.sim.data.get_site_xpos('site:object0')
             # rotations
-            object_rot = rotations.mat2euler(self.sim.data.get_site_xmat('object0'))
+            object_rot = rotations.mat2euler(self.sim.data.get_site_xmat('site:object0'))
             # velocities
-            object_velp = self.sim.data.get_site_xvelp('object0') * dt
-            object_velr = self.sim.data.get_site_xvelr('object0') * dt
+            object_velp = self.sim.data.get_site_xvelp('site:object0') * dt
+            object_velr = self.sim.data.get_site_xvelr('site:object0') * dt
             # gripper state
             object_rel_pos = object_pos - grip_pos
             object_velp -= grip_velp
@@ -261,7 +261,7 @@ class DobotEnv(robot_env.RobotEnv):
         self.initial_gripper_xpos = np.array([0.8, 0.685, 0.2975])
         #print(self.initial_gripper_xpos)
         if self.has_object:
-            self.height_offset = self.sim.data.get_site_xpos('object0')[2]
+            self.height_offset = self.sim.data.get_site_xpos('site:object0')[2]
 
     def capture(self):
         if self.viewer == None:

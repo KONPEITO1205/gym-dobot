@@ -125,18 +125,18 @@ class DobotClutterEnv(robot_env.RobotEnv):
         if self.has_object:
             for i in range(self.clutter_num + 1):
                 if i == 0:
-                    object_pos = self.sim.data.get_site_xpos('object' + str(i))
+                    object_pos = self.sim.data.get_site_xpos('site:object' + str(i))
                     objPosList.append(object_pos)
                     # rotations
-                    object_rot = rotations.mat2euler(self.sim.data.get_site_xmat('object' + str(i)))
+                    object_rot = rotations.mat2euler(self.sim.data.get_site_xmat('site:object' + str(i)))
                     # velocities
-                    object_velp = self.sim.data.get_site_xvelp('object' + str(i)) * dt
-                    object_velr = self.sim.data.get_site_xvelr('object' + str(i)) * dt
+                    object_velp = self.sim.data.get_site_xvelp('site:object' + str(i)) * dt
+                    object_velr = self.sim.data.get_site_xvelr('site:object' + str(i)) * dt
                     # gripper state
                     object_rel_pos = object_pos - grip_pos
                     object_velp -= grip_velp
                 else:
-                    object_pos = self.sim.data.get_site_xpos('object' + str(i))
+                    object_pos = self.sim.data.get_site_xpos('site:object' + str(i))
                     objPosList.append(object_pos)
         else:
             object_pos = object_rot = object_velp = object_velr = object_rel_pos = np.zeros(0)
@@ -181,18 +181,18 @@ class DobotClutterEnv(robot_env.RobotEnv):
         if self.has_object:
             for i in range(self.clutter_num + 1):
                 if i == 0:
-                    object_pos = self.sim.data.get_site_xpos('object' + str(i))
+                    object_pos = self.sim.data.get_site_xpos('site:object' + str(i))
                     objPosList.append(object_pos)
                     # rotations
-                    object_rot = rotations.mat2euler(self.sim.data.get_site_xmat('object' + str(i)))
+                    object_rot = rotations.mat2euler(self.sim.data.get_site_xmat('site:object' + str(i)))
                     # velocities
-                    object_velp = self.sim.data.get_site_xvelp('object' + str(i)) * dt
-                    object_velr = self.sim.data.get_site_xvelr('object' + str(i)) * dt
+                    object_velp = self.sim.data.get_site_xvelp('site:object' + str(i)) * dt
+                    object_velr = self.sim.data.get_site_xvelr('site:object' + str(i)) * dt
                     # gripper state
                     object_rel_pos = object_pos - grip_pos
                     object_velp -= grip_velp
                 else:
-                    object_pos = self.sim.data.get_site_xpos('object' + str(i))
+                    object_pos = self.sim.data.get_site_xpos('site:object' + str(i))
                     objPosList.append(object_pos)
         else:
             object_pos = object_rot = object_velp = object_velr = object_rel_pos = np.zeros(0)
@@ -359,7 +359,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
         self.initial_gripper_xpos = np.array([0.8, 0.75, 0.2975])
         #print(self.initial_gripper_xpos)
         if self.has_object:
-            self.height_offset = self.sim.data.get_site_xpos('object0')[2]
+            self.height_offset = self.sim.data.get_site_xpos('site:object0')[2]
 
 
     def capture(self):
