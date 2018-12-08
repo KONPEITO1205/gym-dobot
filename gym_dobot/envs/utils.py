@@ -53,9 +53,9 @@ def mocap_set_action(sim, action):
         quat_delta = action[:, 3:]
 
         reset_mocap2body_xpos(sim)
-        pos =  sim.data.mocap_pos + pos_delta
+        # pos =  sim.data.mocap_pos + pos_delta
         # pos = np.clip(pos,[0.6,0.55,0.18],[1.0,0.95,0.57])
-        sim.data.mocap_pos[:] = pos
+        sim.data.mocap_pos[:] = pos_delta
         sim.data.mocap_quat[:] = sim.data.mocap_quat + quat_delta
         theta = sim.data.get_joint_qpos('dobot:base_pan')
         if 'dobot:gripper_rot' in sim.model.joint_names:

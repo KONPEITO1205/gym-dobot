@@ -102,14 +102,15 @@ class DobotEnv(robot_env.RobotEnv):
 
     def _set_action(self, action):
         ovr_data = self.remote.getovrinput()
-        action = [ovr_data[1],ovr_data[2],ovr_data[3],ovr_data[0]]
+        action = np.array([ovr_data[1],ovr_data[2],ovr_data[3],ovr_data[0]])
         assert action.shape == (4,)
         action = action.copy()  # ensure that we don't change the action outside of this scope
         pos_ctrl, gripper_ctrl = action[:3], action[3]
+        print(gripper_ctrl)
         #pos_ctrl_low = [-0.05,-0.05,-0.05]
         #pos_ctrl_high = [0.05,0.05,0.05]
         #pos_ctrl = np.clip(pos_ctrl,pos_ctrl_low,pos_ctrl_high)
-        pos_ctrl *= 0.05 # limit maximum change in position
+        # pos_ctrl *= 0.05 # limit maximum change in position
         rot_ctrl = [-1, 0, 0, 0]  # fixed rotation of the end effector, expressed as a quaternion
         gripper_ctrl = np.array([gripper_ctrl, -gripper_ctrl])
         assert gripper_ctrl.shape == (2,)
