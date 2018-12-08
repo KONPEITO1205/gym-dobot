@@ -1,5 +1,5 @@
 import numpy as np
-from gym_dobot.envs import rotations, robot_env, utils
+from gym_dobot.envs import rotations, robot_env, utils,mjremote
 from mujoco_py.generated import const
 
 
@@ -54,6 +54,13 @@ class DobotClutterEnv(robot_env.RobotEnv):
             model_path=model_path, n_substeps=n_substeps, n_actions=4,
             initial_qpos=initial_qpos)
 
+        self.remote = mjremote.mjremote()
+        connection_data = self.remote.connect(address='192.168.43.45')
+        self.nqpos = connection_data[0]
+        print('Connected: ', connection_data)
+        assert len(self.sim.data.qpos) == self.nqpos, "Remote Renderer and Mujoco Simulation Doesn't Match"
+        self.remote.setqpos(self.sim.data.qpos)
+
     # GoalEnv methods
     # ----------------------------
 
@@ -94,15 +101,19 @@ class DobotClutterEnv(robot_env.RobotEnv):
             self.sim.data.set_joint_qpos('dobot:l_gripper_joint', 0.)
             self.sim.data.set_joint_qpos('dobot:r_gripper_joint', 0.)
             self.sim.forward()
+        self.remote.setqpos(self.sim.data.qpos)
+        self.remote.setmocap(self.sim.data.mocap_pos[0],self.sim.data.mocap_quat[0])
 
     def _set_action(self, action):
+        ovr_data = self.remote.getovrinput()
+        action = np.array([ovr_data[1],ovr_data[2],ovr_data[3],ovr_data[0]])
         assert action.shape == (4,)
         action = action.copy()  # ensure that we don't change the action outside of this scope
         pos_ctrl, gripper_ctrl = action[:3], action[3]
         #pos_ctrl_low = [-0.05,-0.05,-0.05]
         #pos_ctrl_high = [0.05,0.05,0.05]
         #pos_ctrl = np.clip(pos_ctrl,pos_ctrl_low,pos_ctrl_high)
-        pos_ctrl *= 0.05 # limit maximum change in position
+        # pos_ctrl *= 0.05 # limit maximum change in position
         rot_ctrl = [-1, 0, 0, 0]  # fixed rotation of the end effector, expressed as a quaternion
         gripper_ctrl = np.array([gripper_ctrl, -gripper_ctrl])
         assert gripper_ctrl.shape == (2,)
