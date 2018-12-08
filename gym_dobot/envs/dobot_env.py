@@ -1,6 +1,7 @@
 import numpy as np
 from gym_dobot.envs import rotations, robot_env, utils
 from mujoco_py.generated import const
+from mjremote import mjremote
 
 
 def goal_distance(goal_a, goal_b):
@@ -48,6 +49,9 @@ class DobotEnv(robot_env.RobotEnv):
         super(DobotEnv, self).__init__(
             model_path=model_path, n_substeps=n_substeps, n_actions=4,
             initial_qpos=initial_qpos)
+
+    m = mjremote()
+    print('Connect: ', m.connect(address='192.168.43.45'))
 
     # GoalEnv methods
     # ----------------------------
