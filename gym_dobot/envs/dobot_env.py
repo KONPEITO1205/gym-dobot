@@ -1,7 +1,6 @@
 import numpy as np
-from gym_dobot.envs import rotations, robot_env, utils
+from gym_dobot.envs import rotations, robot_env, utils,mjremote
 from mujoco_py.generated import const
-from mjremote import mjremote
 
 
 def goal_distance(goal_a, goal_b):
@@ -50,9 +49,12 @@ class DobotEnv(robot_env.RobotEnv):
             model_path=model_path, n_substeps=n_substeps, n_actions=4,
             initial_qpos=initial_qpos)
 
-    m = mjremote()
-    print('Connect: ', m.connect(address='192.168.43.45'))
-
+        self.remote = mjremote.mjremote()
+        connection_data = self.remote.connect(address='192.168.43.45')
+        self.nqpos = connection_data[0]
+        print('Connected: ', connection_data)
+        assert len(self.sim.data.qpos) == self.nqpos, "Remote Renderer and Mujoco Simulation Doesn't Match"
+        self.remote.setqpos(self.sim.data.qpos)
     # GoalEnv methods
     # ----------------------------
 
@@ -93,6 +95,8 @@ class DobotEnv(robot_env.RobotEnv):
             self.sim.data.set_joint_qpos('dobot:l_gripper_joint', 0.)
             self.sim.data.set_joint_qpos('dobot:r_gripper_joint', 0.)
             self.sim.forward()
+        self.remote.setqpos(self.sim.data.qpos)
+        
 
     def _set_action(self, action):
         assert action.shape == (4,)
