@@ -98,3 +98,13 @@ class mjremote:
         self._s.sendall(struct.pack("i", 7))
         self._s.sendall(fpos.tobytes())
         self._s.sendall(fquat.tobytes())
+
+    # result = (grip, pos[3], quat[4])
+    def getovrinput(self):
+        if not self._s:
+            return 'Not connected'
+        self._s.sendall(struct.pack("i", 8))
+        data = bytearray(32)
+        self._recvall(data)
+        result = struct.unpack('ffffffff', data)
+        return result

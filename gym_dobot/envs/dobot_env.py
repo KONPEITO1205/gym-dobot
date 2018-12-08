@@ -97,11 +97,12 @@ class DobotEnv(robot_env.RobotEnv):
             self.sim.forward()
         self.remote.setqpos(self.sim.data.qpos)
         self.remote.setmocap(self.sim.data.mocap_pos[0],self.sim.data.mocap_quat[0])
-        print(self.sim.data.mocap_quat[0])
 
         
 
     def _set_action(self, action):
+        ovr_data = self.remote.getovrinput()
+        action = [ovr_data[1],ovr_data[2],ovr_data[3],ovr_data[0]]
         assert action.shape == (4,)
         action = action.copy()  # ensure that we don't change the action outside of this scope
         pos_ctrl, gripper_ctrl = action[:3], action[3]
