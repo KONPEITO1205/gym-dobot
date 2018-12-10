@@ -50,7 +50,7 @@ class DobotEnv(robot_env.RobotEnv):
             initial_qpos=initial_qpos)
 
         self.remote = mjremote.mjremote()
-        connection_data = self.remote.connect(address='192.168.43.45')
+        connection_data = self.remote.connect(address='172.27.30.38')
         self.nqpos = connection_data[0]
         print('Connected: ', connection_data)
         assert len(self.sim.data.qpos) == self.nqpos, "Remote Renderer and Mujoco Simulation Doesn't Match"
