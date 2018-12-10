@@ -2,7 +2,7 @@ import gym
 from gym_dobot.envs import DobotPickAndPlaceEnv, DobotPushEnv, DobotReachEnv
 
 
-env = gym.make('DobotPickAndPlace-v1')
+env = gym.make('DobotClutterPickAndPlace-v1')
 #env = gym.make('FetchPickAndPlace-v1')
 env.reset()
 
