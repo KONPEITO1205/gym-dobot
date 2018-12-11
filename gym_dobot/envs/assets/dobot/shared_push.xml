@@ -8,6 +8,8 @@
         <texture name="blue_block" file="block_blue.png" gridsize="3 4" gridlayout=".U..LFRB.D.."></texture>
         <texture name="pink_block" file="block_pink.png" gridsize="3 4" gridlayout=".U..LFRB.D.."></texture>
         <texture name="magenta_block" file="block_magenta.png" gridsize="3 4" gridlayout=".U..LFRB.D.."></texture>
+        <texture name="dark_blue_block" file="block_dark_blue.png" gridsize="3 4" gridlayout=".U..LFRB.D.."></texture>
+        <texture name="dark_green_block" file="block_dark_green.png" gridsize="3 4" gridlayout=".U..LFRB.D.."></texture>
         <texture name="arm_tex" file="arm.png" type="2d"></texture>
         <texture name="base_tex" file="base.png" type="2d"></texture>
         <texture name="base_blue_tex" file="base_blue.png" type="2d"></texture>
@@ -22,6 +24,8 @@
         <material name="yellow_block_mat" specular="0" shininess="0.5" reflectance="0" rgba="1 1 1 1" texture="yellow_block"></material>
         <material name="green_block_mat" specular="0" shininess="0.5" reflectance="0" rgba="1 1 1 1" texture="green_block"></material>
         <material name="blue_block_mat" specular="0" shininess="0.5" reflectance="0" rgba="1 1 1 1" texture="blue_block"></material>
+        <material name="dark_blue_block_mat" specular="0" shininess="0.5" reflectance="0" rgba="1 1 1 1" texture="dark_blue_block"></material>
+        <material name="dark_green_block_mat" specular="0" shininess="0.5" reflectance="0" rgba="1 1 1 1" texture="dark_green_block"></material>
         <material name="pink_block_mat" specular="0" shininess="0.5" reflectance="0" rgba="1 1 1 1" texture="pink_block"></material>
         <material name="magenta_block_mat" specular="0" shininess="0.5" reflectance="0" rgba="1 1 1 1" texture="magenta_block"></material>
         <material name="puck_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.2 0.2 0.2 1" texture="base_tex"></material>
