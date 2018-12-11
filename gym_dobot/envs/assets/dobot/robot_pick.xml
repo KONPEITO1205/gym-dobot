@@ -31,16 +31,23 @@
 							<body name="dobot:gripper">
 								<inertial diaginertia="1.2869 1.2236 0.9868" mass="0.1" pos="0 0 0"></inertial>
 								<joint name="dobot:gripper_rot" type="hinge" pos="0 -0.123 -0.12" axis="0 0 1"/>
-								<site name="dobot:grip" pos="0 -0.123 -0.153" rgba="0 0 0 0" size="0.02 0.02 0.02"></site>								
-								<body childclass="dobot:fetchGripper" name="dobot:l_gripper_link" pos="0 -0.1425 -0.09" euler="0 0 0">
-									<inertial diaginertia="1.2869 1.2236 0.9868" mass="0.3294" pos="0 0 0"></inertial>
-									<geom mesh="dobot:l_gripper_link" name="dobot:l_gripper_link" pos = "0 0 0" material="gripper_mat" class="dobot:white"></geom>
-									<joint name="dobot:l_gripper_joint" type="slide" axis="0 1 0" limited="true" range="-0.025 0"/>
-								</body>
-								<body childclass="dobot:fetchGripper" name="dobot:r_gripper_link" pos="0 -0.1025 -0.09" euler="0 0 0">
-									<inertial diaginertia="1.2869 1.2236 0.9868" mass="0.3294" pos="0 0 0"></inertial>
-									<geom mesh="dobot:r_gripper_link" name="dobot:r_gripper_link" pos = "0 0 0" material="gripper_mat" class="dobot:white"></geom>
-									<joint name="dobot:r_gripper_joint" type="slide" axis="0 1 0" limited="true" range = "0 0.025"/>
+								<site name="dobot:grip" pos="0 -0.123 -0.153" rgba="0 0 0 0" size="0.02 0.02 0.02"></site>
+								<body name="dobot:support">
+									<geom type="cylinder" size="0.01 0.005" pos="0 -0.123 -0.075" material="gripper_mat" class="dobot:white"></geom>
+									<geom type="box" size="0.01 0.005 0.025" pos="0 -0.123 -0.090" material="gripper_mat" class="dobot:white"></geom>								
+									<geom type="cylinder" size="0.005 0.055" pos="0 -0.123 -0.09" euler="1.57 0 1.57" material="table_mat" class="dobot:white"></geom>																
+									<body childclass="dobot:fetchGripper" name="dobot:l_gripper_link" pos="0 -0.1425 -0.09" euler="0 0 0">
+										<inertial diaginertia="1.2869 1.2236 0.9868" mass="0.3294" pos="0 0 0"></inertial>
+										<geom type="cylinder" size="0.01 0.01" pos="0 0 0" euler="1.57 0 1.57" material="gripper_mat" class="dobot:white"></geom>
+										<geom mesh="dobot:l_gripper_link" name="dobot:l_gripper_link" pos = "0 0 0" material="gripper_mat" class="dobot:white" condim="6" solimp="1.0 1.0 0.01"></geom>
+										<joint name="dobot:l_gripper_joint" type="slide" axis="0 1 0" limited="true" range="-0.025 0"/>
+									</body>
+									<body childclass="dobot:fetchGripper" name="dobot:r_gripper_link" pos="0 -0.1025 -0.09" euler="0 0 0">
+										<inertial diaginertia="1.2869 1.2236 0.9868" mass="0.3294" pos="0 0 0"></inertial>
+										<geom type="cylinder" size="0.01 0.01" pos="0 0.0005 0" euler="1.57 0 1.57" material="gripper_mat" class="dobot:white"></geom>
+										<geom mesh="dobot:r_gripper_link" name="dobot:r_gripper_link" pos = "0 0 0" material="gripper_mat" class="dobot:white" condim="6" solimp="1.0 1.0 0.01"></geom>
+										<joint name="dobot:r_gripper_joint" type="slide" axis="0 1 0" limited="true" range = "0 0.025"/>
+									</body>
 								</body>
 							</body>
 						</body>
@@ -48,9 +55,5 @@
 				</body>
 			</body>
 		</body>
-
-
-
-
 
 </mujoco>
