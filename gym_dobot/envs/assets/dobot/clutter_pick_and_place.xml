@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mujoco>
 	<compiler angle="radian" coordinate="local" meshdir="../stls/dobot" texturedir="../textures"></compiler>
-	<option timestep="0.002">
+	<option solver="Newton" timestep="0.002">
 		<flag warmstart="enable"></flag>
 	</option>
 	<visual>
