@@ -153,7 +153,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
             grip_pos, objPosList[0].ravel(), object_rel_pos.ravel(), gripper_state,
         ])
 
-        num = 4
+        num = 6
         for i in range(1,self.clutter_num+1):
             if np.linalg.norm(objPosList[0][:2]-objPosList[i][:2]) < 0.050 and num:
                 obs = np.concatenate([obs,objPosList[i]])
@@ -323,13 +323,13 @@ class DobotClutterEnv(robot_env.RobotEnv):
         size = np.array([0.28,0.10]) - 0.020
         up = pos + size
         low = pos - size
-        # goal = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1]),0.128])
-        goal = np.array([0.97, 0.595, 0.128])
+        goal = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1]),0.148])
+        # goal = np.array([0.97, 0.595, 0.128])
 
 
         if self.has_object:
             if self.target_in_the_air and self.np_random.uniform() < 1.0:
-                goal[2] = 0.128#self.np_random.uniform(0.028, 0.148)
+                goal[2] = 0.148#self.np_random.uniform(0.028, 0.148)
         else:
             goal[2] = self.np_random.uniform(0.028, 0.148)
 
