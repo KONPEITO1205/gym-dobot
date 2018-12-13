@@ -55,7 +55,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
             initial_qpos=initial_qpos)
 
         self.remote = mjremote.mjremote()
-        connection_data = self.remote.connect(address='172.27.30.38')
+        connection_data = self.remote.connect()
         self.nqpos = connection_data[0]
         print('Connected: ', connection_data)
         assert len(self.sim.data.qpos) == self.nqpos, "Remote Renderer and Mujoco Simulation Doesn't Match"
@@ -113,7 +113,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
         #pos_ctrl_low = [-0.05,-0.05,-0.05]
         #pos_ctrl_high = [0.05,0.05,0.05]
         #pos_ctrl = np.clip(pos_ctrl,pos_ctrl_low,pos_ctrl_high)
-        # pos_ctrl *= 0.05 # limit maximum change in position
+        pos_ctrl *= 0.05 # limit maximum change in position
         rot_ctrl = [-1, 0, 0, 0]  # fixed rotation of the end effector, expressed as a quaternion
         gripper_ctrl = np.array([gripper_ctrl, -gripper_ctrl])
         assert gripper_ctrl.shape == (2,)
