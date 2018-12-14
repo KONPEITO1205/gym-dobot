@@ -7,7 +7,7 @@ from scipy.misc import imsave
 @click.command()
 @click.option('--env', default="DobotClutterPickAndPlaceEnv", help='Which environment to run (Eg. - DobotReachEnv)')
 @click.option('--render',default=1,help='Whether to render the environment')
-@click.option('--steps',default=100,help='Number of timesteps to run the environment each time')
+@click.option('--steps',default=150,help='Number of timesteps to run the environment each time')
 @click.option('--clutter',default=40,help='Number of clutter objects for clutter environments')
 @click.option('--rand_dom',default=0,help='Whether to use domain randomization')
 def main(env,render,steps,clutter,rand_dom):

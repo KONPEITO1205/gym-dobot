@@ -47,6 +47,11 @@ class RobotEnv(gym.GoalEnv):
             observation=spaces.Box(-np.inf, np.inf, shape=obs['observation'].shape, dtype='float32'),
         ))
 
+        self.episodeAcs = []
+        self.episodeObs = []
+        self.episodeInfo = []
+
+
     @property
     def dt(self):
         return self.sim.model.opt.timestep * self.sim.nsubsteps

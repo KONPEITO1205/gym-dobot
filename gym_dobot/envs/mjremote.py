@@ -117,4 +117,11 @@ class mjremote:
         fpos = pos.astype('float32')
         self._s.sendall(struct.pack("i", 9))
         self._s.sendall(fpos.tobytes())
+    
+    def settargetstatus(self,value):
+        if not self._s:
+            return 'Not connected'
+        self._s.sendall(struct.pack("i", 10))
+        self._s.sendall(struct.pack("i", value))
+
 

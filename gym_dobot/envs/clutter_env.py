@@ -71,6 +71,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
         d = goal_distance(achieved_goal, goal)
         if self.reward_type == 'sparse':
             ret = -(d > self.distance_threshold).astype(np.float32)
+            self.remote.settargetstatus(int(ret))
         else:
             ret = -d
         clutterNumber = 0
