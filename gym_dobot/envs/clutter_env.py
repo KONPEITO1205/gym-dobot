@@ -268,8 +268,11 @@ class DobotClutterEnv(robot_env.RobotEnv):
             if save[0]==1:
                 fname = datetime.datetime.now().strftime("Demo_%d%b_%H-%M-%S.npz")
                 dirname, filename = os.path.split(os.path.abspath(__file__))
-                path = os.path.join(dirname,fname)
-                np.savez_compressed(path, epacs=self.episodeAcs, epobs=self.episodeObs, epinfo=self.episodeInfo)
+                path = os.path.join(dirname,'Demos',fname)
+                try:
+                    np.savez_compressed(path, epacs=self.episodeAcs, epobs=self.episodeObs, epinfo=self.episodeInfo)
+                except:
+                    sys.exit('ERROR: Could not save demo')
                 print("Saved "+fname)
             elif save[0]==-1:
                 sys.exit('Terminated from Renderer')
