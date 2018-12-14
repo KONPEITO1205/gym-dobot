@@ -67,7 +67,7 @@ class RobotEnv(gym.GoalEnv):
         obsTemp = obs['observation']
         params = {}
         params['clutter_reward'] = 0
-        params['clutter_num'] = 20
+        params['clutter_num'] = 40
 
         done = False
         info = {
