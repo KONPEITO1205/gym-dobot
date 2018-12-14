@@ -44,6 +44,8 @@ class DobotEnv(robot_env.RobotEnv):
         self.distance_threshold = distance_threshold
         self.reward_type = reward_type
         self.rand_dom = rand_dom
+        self.sent_target = False
+
 
         super(DobotEnv, self).__init__(
             model_path=model_path, n_substeps=n_substeps, n_actions=4,
@@ -95,6 +97,9 @@ class DobotEnv(robot_env.RobotEnv):
             self.sim.data.set_joint_qpos('dobot:l_gripper_joint', 0.)
             self.sim.data.set_joint_qpos('dobot:r_gripper_joint', 0.)
             self.sim.forward()
+        if not self.sent_target:
+            self.remote.settarget(self.goal)
+            self.sent_target = True
         self.remote.setqpos(self.sim.data.qpos)
         self.remote.setmocap(self.sim.data.mocap_pos[0],self.sim.data.mocap_quat[0])
 
@@ -223,6 +228,7 @@ class DobotEnv(robot_env.RobotEnv):
             
 
         self.sim.forward()
+        self.sent_target = False
         return True
 
     def _sample_goal(self):

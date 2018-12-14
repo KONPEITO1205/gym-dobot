@@ -48,6 +48,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
         assert clutter_num <= 60
         self.clutter_num = clutter_num
         self.rand_dom = rand_dom
+        self.sent_target = False
 
 
         super(DobotClutterEnv, self).__init__(
@@ -101,6 +102,9 @@ class DobotClutterEnv(robot_env.RobotEnv):
             self.sim.data.set_joint_qpos('dobot:l_gripper_joint', 0.)
             self.sim.data.set_joint_qpos('dobot:r_gripper_joint', 0.)
             self.sim.forward()
+        if not self.sent_target:
+            self.remote.settarget(self.goal)
+            self.sent_target = True
         self.remote.setqpos(self.sim.data.qpos)
         self.remote.setmocap(self.sim.data.mocap_pos[0],self.sim.data.mocap_quat[0])
 
@@ -294,7 +298,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
             self.sim.data.set_joint_qpos('object0:joint', object_qpos)
 
         self.sim.forward()
-        self.remote.settarget(self.goal)
+        self.sent_target=False
         return True
 
     def clutter(self):
