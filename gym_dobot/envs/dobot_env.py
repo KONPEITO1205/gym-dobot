@@ -74,18 +74,19 @@ class DobotEnv(robot_env.RobotEnv):
         d = goal_distance(achieved_goal, goal)
         if self.reward_type == 'sparse':
             ret = -(d > self.distance_threshold).astype(np.float32)
+            self.remote.settargetstatus(int(ret))
         else:
             ret = -d
         clutterNumber = 0
-        clutterPos = []
-        if params['clutter_reward'] == 1:
-            # List of positions of clutter boxes
-            object0Pos = np.array(obs[3:6])
-            for i in range(params['clutter_num']):
-                clutterPos.append(np.array(obs[3*i+25:3*i+28]))
-            for i in range(params['clutter_num']):
-                if np.linalg.norm(object0Pos[:2]-clutterPos[i][:2]) < 0.050:
-                    clutterNumber += 1
+        # clutterPos = []
+        # if params['clutter_reward'] == 1:
+        #     # List of positions of clutter boxes
+        #     object0Pos = np.array(obs[3:6])
+        #     for i in range(params['clutter_num']):
+        #         clutterPos.append(np.array(obs[3*i+25:3*i+28]))
+        #     for i in range(params['clutter_num']):
+        #         if np.linalg.norm(object0Pos[:2]-clutterPos[i][:2]) < 0.050:
+        #             clutterNumber += 1
         # print(clutterPos,'clutter')
         return ret-clutterNumber
 

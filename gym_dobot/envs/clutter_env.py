@@ -1,6 +1,9 @@
 import numpy as np
 from gym_dobot.envs import rotations, robot_env, utils,mjremote
 from mujoco_py.generated import const
+import datetime
+import sys
+import os
 
 
 
@@ -61,6 +64,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
         print('Connected: ', connection_data)
         assert len(self.sim.data.qpos) == self.nqpos, "Remote Renderer and Mujoco Simulation Doesn't Match"
         self.remote.setqpos(self.sim.data.qpos)
+        self.startup = True
 
     # GoalEnv methods
     # ----------------------------
@@ -112,6 +116,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
     def _set_action(self, action):
         ovr_data = self.remote.getovrinput()
         action = np.array([ovr_data[1],ovr_data[2],ovr_data[3],ovr_data[0]])
+        self.episodeAcs.append(action)
         assert action.shape == (4,)
         action = action.copy()  # ensure that we don't change the action outside of this scope
         pos_ctrl, gripper_ctrl = action[:3], action[3]
@@ -258,6 +263,20 @@ class DobotClutterEnv(robot_env.RobotEnv):
 
 
     def _reset_sim(self):
+        if not self.startup:
+            save = self.remote.getsavestatus()
+            if save[0]==1:
+                fname = datetime.datetime.now().strftime("Demo_%d%b_%H-%M-%S.npz")
+                dirname, filename = os.path.split(os.path.abspath(__file__))
+                path = os.path.join(dirname,fname)
+                np.savez_compressed(path, epacs=self.episodeAcs, epobs=self.episodeObs, epinfo=self.episodeInfo)
+                print("Saved "+fname)
+            elif save[0]==-1:
+                sys.exit('Terminated from Renderer')
+        self.episodeAcs = []
+        self.episodeObs = []
+        self.episodeInfo = []
+        self.startup = False
         self.sim.set_state(self.initial_state)
         self.clutter()
         if self.viewer!= None and self.rand_dom: 

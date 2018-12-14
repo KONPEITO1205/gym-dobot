@@ -79,6 +79,8 @@ class RobotEnv(gym.GoalEnv):
             'is_success': self._is_success(obs['achieved_goal'], self.goal),
         }
         reward = self.compute_reward(obs['achieved_goal'], self.goal, info, obsTemp, params)
+        self.episodeInfo.append(info)
+        self.episodeObs.append(obs)
         return obs, reward, done, info
 
     def reset(self,goal=None):
@@ -96,6 +98,7 @@ class RobotEnv(gym.GoalEnv):
             assert len(goal)==3
             self.goal = np.array(goal)
         obs = self._get_obs()
+        self.episodeObs.append(obs)
         return obs
 
     def close(self):

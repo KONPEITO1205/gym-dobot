@@ -123,5 +123,14 @@ class mjremote:
             return 'Not connected'
         self._s.sendall(struct.pack("i", 10))
         self._s.sendall(struct.pack("i", value))
+    
+    def getsavestatus(self):
+        if not self._s:
+            return 'Not connected'
+        self._s.sendall(struct.pack("i", 11))
+        data = bytearray(4)
+        self._recvall(data)
+        result = struct.unpack('i', data)
+        return result
 
 
