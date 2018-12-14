@@ -251,6 +251,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
         self.sim.model.site_pos[site_id] = self.goal - sites_offset[0]
         self.sim.forward()
 
+
     def _reset_sim(self):
         self.sim.set_state(self.initial_state)
         self.clutter()
@@ -293,6 +294,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
             self.sim.data.set_joint_qpos('object0:joint', object_qpos)
 
         self.sim.forward()
+        self.remote.settarget(self.goal)
         return True
 
     def clutter(self):

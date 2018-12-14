@@ -108,3 +108,13 @@ class mjremote:
         self._recvall(data)
         result = struct.unpack('ffffffff', data)
         return result
+
+    def settarget(self,pos):
+        if not self._s:
+            return 'Not connected'
+        if len(pos)!=3:
+            return 'pos has wrong size'
+        fpos = pos.astype('float32')
+        self._s.sendall(struct.pack("i", 9))
+        self._s.sendall(fpos.tobytes())
+
