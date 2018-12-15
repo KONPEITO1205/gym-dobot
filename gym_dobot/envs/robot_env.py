@@ -47,6 +47,11 @@ class RobotEnv(gym.GoalEnv):
             observation=spaces.Box(-np.inf, np.inf, shape=obs['observation'].shape, dtype='float32'),
         ))
 
+        self.episodeAcs = []
+        self.episodeObs = []
+        self.episodeInfo = []
+
+
     @property
     def dt(self):
         return self.sim.model.opt.timestep * self.sim.nsubsteps
@@ -74,6 +79,8 @@ class RobotEnv(gym.GoalEnv):
             'is_success': self._is_success(obs['achieved_goal'], self.goal),
         }
         reward = self.compute_reward(obs['achieved_goal'], self.goal, info, obsTemp, params)
+        self.episodeInfo.append(info)
+        self.episodeObs.append(obs)
         return obs, reward, done, info
 
     def reset(self,goal=None):
@@ -91,6 +98,7 @@ class RobotEnv(gym.GoalEnv):
             assert len(goal)==3
             self.goal = np.array(goal)
         obs = self._get_obs()
+        self.episodeObs.append(obs)
         return obs
 
     def close(self):

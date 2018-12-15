@@ -1,5 +1,5 @@
 import numpy as np
-from gym_dobot.envs import rotations, robot_env, utils
+from gym_dobot.envs import rotations, robot_env, utils,mjremote
 from mujoco_py.generated import const
 
 
@@ -15,7 +15,7 @@ class DobotEnv(robot_env.RobotEnv):
     def __init__(
         self, model_path, n_substeps, gripper_extra_height, block_gripper,
         has_object, target_in_the_air, target_offset, obj_range, target_range,
-        distance_threshold, initial_qpos, reward_type,rand_dom,
+        distance_threshold, initial_qpos, reward_type,rand_dom,unity_remote,
     ):
         """Initializes a new Dobot environment.
 
@@ -44,11 +44,22 @@ class DobotEnv(robot_env.RobotEnv):
         self.distance_threshold = distance_threshold
         self.reward_type = reward_type
         self.rand_dom = rand_dom
+        self.sent_target = False
+        self.unity_remote = unity_remote
+
 
         super(DobotEnv, self).__init__(
             model_path=model_path, n_substeps=n_substeps, n_actions=4,
             initial_qpos=initial_qpos)
 
+        if self.unity_remote:
+            self.remote = mjremote.mjremote()
+            connection_data = self.remote.connect()
+            self.nqpos = connection_data[0]
+            print('Connected: ', connection_data)
+            assert len(self.sim.data.qpos) == self.nqpos, "Remote Renderer and Mujoco Simulation Doesn't Match"
+            self.remote.setqpos(self.sim.data.qpos)
+            self.startup = True
     # GoalEnv methods
     # ----------------------------
 
@@ -66,18 +77,20 @@ class DobotEnv(robot_env.RobotEnv):
         d = goal_distance(achieved_goal, goal)
         if self.reward_type == 'sparse':
             ret = -(d > self.distance_threshold).astype(np.float32)
+            if self.unity_remote:
+                self.remote.settargetstatus(int(ret))
         else:
             ret = -d
         clutterNumber = 0
-        clutterPos = []
-        if params['clutter_reward'] == 1:
-            # List of positions of clutter boxes
-            object0Pos = np.array(obs[3:6])
-            for i in range(params['clutter_num']):
-                clutterPos.append(np.array(obs[3*i+25:3*i+28]))
-            for i in range(params['clutter_num']):
-                if np.linalg.norm(object0Pos[:2]-clutterPos[i][:2]) < 0.050:
-                    clutterNumber += 1
+        # clutterPos = []
+        # if params['clutter_reward'] == 1:
+        #     # List of positions of clutter boxes
+        #     object0Pos = np.array(obs[3:6])
+        #     for i in range(params['clutter_num']):
+        #         clutterPos.append(np.array(obs[3*i+25:3*i+28]))
+        #     for i in range(params['clutter_num']):
+        #         if np.linalg.norm(object0Pos[:2]-clutterPos[i][:2]) < 0.050:
+        #             clutterNumber += 1
         # print(clutterPos,'clutter')
         return ret-clutterNumber
 
@@ -89,11 +102,24 @@ class DobotEnv(robot_env.RobotEnv):
             self.sim.data.set_joint_qpos('dobot:l_gripper_joint', 0.)
             self.sim.data.set_joint_qpos('dobot:r_gripper_joint', 0.)
             self.sim.forward()
+        if self.unity_remote:
+            if not self.sent_target:
+                self.remote.settarget(self.goal)
+                self.sent_target = True
+            self.remote.setqpos(self.sim.data.qpos)
+            self.remote.setmocap(self.sim.data.mocap_pos[0],self.sim.data.mocap_quat[0])
+
+        
 
     def _set_action(self, action):
+        if self.unity_remote:
+            ovr_data = self.remote.getovrinput()
+            action = np.array([ovr_data[1],ovr_data[2],ovr_data[3],ovr_data[0]])
+        self.episodeAcs.append(action)
         assert action.shape == (4,)
         action = action.copy()  # ensure that we don't change the action outside of this scope
         pos_ctrl, gripper_ctrl = action[:3], action[3]
+        print(gripper_ctrl)
         #pos_ctrl_low = [-0.05,-0.05,-0.05]
         #pos_ctrl_high = [0.05,0.05,0.05]
         #pos_ctrl = np.clip(pos_ctrl,pos_ctrl_low,pos_ctrl_high)
@@ -169,6 +195,24 @@ class DobotEnv(robot_env.RobotEnv):
         self.sim.forward()
 
     def _reset_sim(self):
+        if self.unity_remote:
+            if not self.startup:
+                save = self.remote.getsavestatus()
+                if save[0]==1:
+                    fname = datetime.datetime.now().strftime("Demo_%d%b_%H-%M-%S.npz")
+                    dirname, filename = os.path.split(os.path.abspath(__file__))
+                    path = os.path.join(dirname,'Demos',fname)
+                    try:
+                        np.savez_compressed(path, epacs=self.episodeAcs, epobs=self.episodeObs, epinfo=self.episodeInfo)
+                    except:
+                        sys.exit('ERROR: Could not save demo')
+                    print("Saved "+fname)
+                elif save[0]==-1:
+                    sys.exit('Terminated from Renderer')
+            self.startup = False
+        self.episodeAcs = []
+        self.episodeObs = []
+        self.episodeInfo = []
         self.sim.set_state(self.initial_state)
         if self.viewer!= None and self.rand_dom: 
             for name in self.sim.model.geom_names:
@@ -210,6 +254,8 @@ class DobotEnv(robot_env.RobotEnv):
             
 
         self.sim.forward()
+        if self.unity_remote:
+            self.sent_target=False
         return True
 
     def _sample_goal(self):
