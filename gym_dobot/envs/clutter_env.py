@@ -19,7 +19,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
     def __init__(
         self, model_path, n_substeps, gripper_extra_height, block_gripper,
         has_object, target_in_the_air, target_offset, obj_range, target_range,
-        distance_threshold, initial_qpos, reward_type,clutter_num,rand_dom,
+        distance_threshold, initial_qpos, reward_type,clutter_num,rand_dom,unity_remote,
     ):
         """Initializes a new DobotClutter environment.
 
@@ -52,19 +52,21 @@ class DobotClutterEnv(robot_env.RobotEnv):
         self.clutter_num = clutter_num
         self.rand_dom = rand_dom
         self.sent_target = False
+        self.unity_remote = unity_remote
 
 
         super(DobotClutterEnv, self).__init__(
             model_path=model_path, n_substeps=n_substeps, n_actions=4,
             initial_qpos=initial_qpos)
 
-        self.remote = mjremote.mjremote()
-        connection_data = self.remote.connect()
-        self.nqpos = connection_data[0]
-        print('Connected: ', connection_data)
-        assert len(self.sim.data.qpos) == self.nqpos, "Remote Renderer and Mujoco Simulation Doesn't Match"
-        self.remote.setqpos(self.sim.data.qpos)
-        self.startup = True
+        if self.unity_remote:
+            self.remote = mjremote.mjremote()
+            connection_data = self.remote.connect()
+            self.nqpos = connection_data[0]
+            print('Connected: ', connection_data)
+            assert len(self.sim.data.qpos) == self.nqpos, "Remote Renderer and Mujoco Simulation Doesn't Match"
+            self.remote.setqpos(self.sim.data.qpos)
+            self.startup = True
 
     # GoalEnv methods
     # ----------------------------
@@ -75,7 +77,8 @@ class DobotClutterEnv(robot_env.RobotEnv):
         d = goal_distance(achieved_goal, goal)
         if self.reward_type == 'sparse':
             ret = -(d > self.distance_threshold).astype(np.float32)
-            self.remote.settargetstatus(int(ret))
+            if self.unity_remote:
+                self.remote.settargetstatus(int(ret))
         else:
             ret = -d
         clutterNumber = 0
@@ -107,15 +110,17 @@ class DobotClutterEnv(robot_env.RobotEnv):
             self.sim.data.set_joint_qpos('dobot:l_gripper_joint', 0.)
             self.sim.data.set_joint_qpos('dobot:r_gripper_joint', 0.)
             self.sim.forward()
-        if not self.sent_target:
-            self.remote.settarget(self.goal)
-            self.sent_target = True
-        self.remote.setqpos(self.sim.data.qpos)
-        self.remote.setmocap(self.sim.data.mocap_pos[0],self.sim.data.mocap_quat[0])
+        if self.unity_remote:
+            if not self.sent_target:
+                self.remote.settarget(self.goal)
+                self.sent_target = True
+            self.remote.setqpos(self.sim.data.qpos)
+            self.remote.setmocap(self.sim.data.mocap_pos[0],self.sim.data.mocap_quat[0])
 
     def _set_action(self, action):
-        ovr_data = self.remote.getovrinput()
-        action = np.array([ovr_data[1],ovr_data[2],ovr_data[3],ovr_data[0]])
+        if self.unity_remote:
+            ovr_data = self.remote.getovrinput()
+            action = np.array([ovr_data[1],ovr_data[2],ovr_data[3],ovr_data[0]])
         self.episodeAcs.append(action)
         assert action.shape == (4,)
         action = action.copy()  # ensure that we don't change the action outside of this scope
@@ -263,23 +268,24 @@ class DobotClutterEnv(robot_env.RobotEnv):
 
 
     def _reset_sim(self):
-        if not self.startup:
-            save = self.remote.getsavestatus()
-            if save[0]==1:
-                fname = datetime.datetime.now().strftime("Demo_%d%b_%H-%M-%S.npz")
-                dirname, filename = os.path.split(os.path.abspath(__file__))
-                path = os.path.join(dirname,'Demos',fname)
-                try:
-                    np.savez_compressed(path, epacs=self.episodeAcs, epobs=self.episodeObs, epinfo=self.episodeInfo)
-                except:
-                    sys.exit('ERROR: Could not save demo')
-                print("Saved "+fname)
-            elif save[0]==-1:
-                sys.exit('Terminated from Renderer')
+        if self.unity_remote:
+            if not self.startup:
+                save = self.remote.getsavestatus()
+                if save[0]==1:
+                    fname = datetime.datetime.now().strftime("Demo_%d%b_%H-%M-%S.npz")
+                    dirname, filename = os.path.split(os.path.abspath(__file__))
+                    path = os.path.join(dirname,'Demos',fname)
+                    try:
+                        np.savez_compressed(path, epacs=self.episodeAcs, epobs=self.episodeObs, epinfo=self.episodeInfo)
+                    except:
+                        sys.exit('ERROR: Could not save demo')
+                    print("Saved "+fname)
+                elif save[0]==-1:
+                    sys.exit('Terminated from Renderer')
+            self.startup = False
         self.episodeAcs = []
         self.episodeObs = []
         self.episodeInfo = []
-        self.startup = False
         self.sim.set_state(self.initial_state)
         self.clutter()
         if self.viewer!= None and self.rand_dom: 
@@ -321,7 +327,8 @@ class DobotClutterEnv(robot_env.RobotEnv):
             self.sim.data.set_joint_qpos('object0:joint', object_qpos)
 
         self.sim.forward()
-        self.sent_target=False
+        if self.unity_remote:
+            self.sent_target=False
         return True
 
     def clutter(self):
