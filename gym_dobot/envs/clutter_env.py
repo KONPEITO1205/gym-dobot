@@ -323,8 +323,8 @@ class DobotClutterEnv(robot_env.RobotEnv):
         size = np.array([0.28,0.10]) - 0.020
         up = pos + size
         low = pos - size
-        goal = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1]),0.148])
-        # goal = np.array([0.97, 0.595, 0.128])
+        # goal = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1]),0.148])
+        goal = np.array([0.97, 0.595, 0.148])
 
 
         if self.has_object:
