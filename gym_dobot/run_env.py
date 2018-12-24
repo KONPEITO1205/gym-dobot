@@ -22,6 +22,8 @@ def main(env,render,steps,clutter,rand_dom,unity_remote):
         for i in range(steps):
             if render:
                 env.render()
+                # img = env.capture(depth=True)
+                # imsave("image.png",img)
             action = env.action_space.sample()
             observation, reward, done, info = env.step(action)
 

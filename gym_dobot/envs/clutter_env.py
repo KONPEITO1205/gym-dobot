@@ -409,14 +409,21 @@ class DobotClutterEnv(robot_env.RobotEnv):
             self.height_offset = self.sim.data.get_site_xpos('site:object0')[2]
 
 
-    def capture(self):
+    def capture(self,depth=False):
         if self.viewer == None:
             pass
         else:
             self.viewer.cam.fixedcamid = 0
             self.viewer.cam.type = const.CAMERA_FIXED
-            img = self.viewer._read_pixels_as_in_window()
-            return img
+            # img = self.viewer._read_pixels_as_in_window(depth=True)
+            width, height = 1920, 1080
+            img = self._get_viewer().read_pixels(width, height, depth=True)
+            depth_image = img[:][:][1][::-1]
+            rgb_image = img[:][:][0][::-1]
+            if depth:
+                return depth_image
+            else:
+                return rgb_image
 
     # def _setPos(self, goal, obs, params):
     #     # Get all positions
