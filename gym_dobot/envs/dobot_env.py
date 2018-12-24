@@ -315,15 +315,21 @@ class DobotEnv(robot_env.RobotEnv):
         else:
             self.viewer.cam.fixedcamid = 0
             self.viewer.cam.type = const.CAMERA_FIXED
-            # img = self.viewer._read_pixels_as_in_window(depth=True)
             width, height = 1920, 1080
-            img = self._get_viewer().read_pixels(width, height, depth=True)
-            depth_image = img[:][:][1][::-1]
-            rgb_image = img[:][:][0][::-1]
+            img = self._get_viewer().read_pixels(width, height, depth=depth)
+            # print(img[:].shape)
+            # # depth_image = img[:][:][1][::-1] # To visualize the depth image(depth=True)
+            # # rgb_image = img[:][:][0][::-1] # To visualize the depth image(depth=True)
+            # depth_image = img[:][:][1][::-1]
+            # rgb_image = img[:][:][0][::-1]
             if depth:
-                return depth_image
+                rgb_image = img[0][::-1]
+                depth_image = np.expand_dims(img[1][::-1],axis=2)
+                rgbd_image = np.concatenate((rgb_image,depth_image),axis=2)
+                return rgbd_image
             else:
-                return rgb_image
+                return img[::-1]
+
 
     def set_object(self,pos):
         if self.has_object:
