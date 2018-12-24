@@ -2,6 +2,7 @@ import gym
 import click
 import gym_dobot.envs as envs
 from scipy.misc import imsave
+import numpy as np
 
 
 @click.command()
@@ -22,7 +23,8 @@ def main(env,render,steps,clutter,rand_dom,unity_remote):
         for i in range(steps):
             if render:
                 env.render()
-                # img = env.capture(depth=True)
+                # img = env.capture(depth=False)
+                # print(img.shape)
                 # imsave("image.png",img)
             action = env.action_space.sample()
             observation, reward, done, info = env.step(action)

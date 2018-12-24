@@ -16,7 +16,7 @@
                 <geom size="0.005 0.120 0.055" type="box" mass="300" pos="-0.300 0 0.025" material="tray_mat"></geom>
                 <!-- geom conaffinity="0" contype="0" pos="0 0.207 0" size="0.2 0.082 0.1" type="box" rgba="1 0 0 0.3" group="2"></geom -->
             </body>
-            <camera euler="0.78 0 0" fovy="40" name="camera0" pos="0 -1 1" mode="targetbody" target="tray"></camera>
+            <camera euler="0.78 0 0" fovy="40" name="camera0" pos="0 -0.8 1" mode="targetbody" target="tray"></camera>
         </body>
     </body>
     <light directional="false" ambient="0.2 0.2 0.2" diffuse="0.8 0.8 0.8" specular="0.3 0.3 0.3" castshadow="false" pos="0.8 0.9 3" name="light0"></light>
