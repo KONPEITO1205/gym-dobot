@@ -274,7 +274,14 @@ class DobotClutterEnv(robot_env.RobotEnv):
                 if save[0]==1:
                     fname = datetime.datetime.now().strftime("Demo_%d%b_%H-%M-%S.npz")
                     dirname, filename = os.path.split(os.path.abspath(__file__))
-                    path = os.path.join(dirname,'Demos',fname)
+                    dirpath = os.path.join(dirname,'Demos')
+                    path = os.path.join(dirpath,fname)
+                    if not os.path.exists(dirpath):
+                        try:
+                            os.makedirs(dirpath)
+                            print("Directory Demos created.")
+                        except:
+                            print("Failed to create directory. Please create one manually.")
                     try:
                         np.savez_compressed(path, epacs=self.episodeAcs, epobs=self.episodeObs, epinfo=self.episodeInfo)
                     except:
