@@ -21,5 +21,12 @@ for filename in glob.glob('Demos/*.npz'):
     count +=1
 
 fname = datetime.datetime.now().strftime(str(count)+"_Demos_Merged_%d%b_%H-%M-%S.npz")
-np.savez_compressed('Demos/Merged/'+fname,acs=actions, obs=observations, info=infos)
+dirpath = 'Demos/Merged/'
+if not os.path.exists(dirpath):
+    try:
+        os.makedirs(dirpath)
+        print("Directory Demos/Merged created.")
+    except:
+        print("Failed to create directory. Please create one manually.")
+np.savez_compressed(dirpath+fname,acs=actions, obs=observations, info=infos)
 print("Saved "+fname)
