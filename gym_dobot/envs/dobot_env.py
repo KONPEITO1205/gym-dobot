@@ -242,7 +242,7 @@ class DobotEnv(robot_env.RobotEnv):
 
         if self.has_object:
             pos = np.array([0.8,0.685])
-            size = np.array([0.280,0.100]) - 0.02
+            size = np.array([0.1580,0.100]) - 0.02
             up = pos + size
             low = pos - size
             object_xpos = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1])])
@@ -270,7 +270,7 @@ class DobotEnv(robot_env.RobotEnv):
         # return goal.copy()
 
         pos = np.array([0.8,0.685])
-        size = np.array([0.280,0.100]) - 0.02
+        size = np.array([0.1580,0.100]) - 0.02
         up = pos + size
         low = pos - size
         goal = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1]),0.028])

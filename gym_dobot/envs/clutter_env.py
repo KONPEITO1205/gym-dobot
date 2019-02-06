@@ -323,7 +323,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
             
         if self.has_object:
             pos = np.array([0.8,0.685])
-            size = np.array([0.28,0.10]) - 0.020
+            size = np.array([0.158,0.10]) - 0.020
             up = pos + size
             low = pos - size
             object_xpos = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1])])
@@ -348,7 +348,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
             object_name = "object{}:joint".format(choice)
             
             pos = np.array([0.8,0.685])
-            size = np.array([0.28,0.10]) - 0.020
+            size = np.array([0.158,0.10]) - 0.020
             up = pos + size
             low = pos - size
             object_xpos = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1])])
@@ -374,7 +374,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
         # return goal.copy()
 
         pos = np.array([0.8,0.685])
-        size = np.array([0.28,0.10]) - 0.020
+        size = np.array([0.158,0.10]) - 0.020
         up = pos + size
         low = pos - size
         # goal = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1]),0.148])
