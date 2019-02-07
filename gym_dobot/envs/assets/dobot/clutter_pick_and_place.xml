@@ -22,7 +22,7 @@
 		<body name="object0" pos="0.025 0.025 0.025">
 			<joint name="object0:joint" type="free" damping="0.01"></joint>
 			<!--inertial diaginertia="5.2869 5.2236 5.9868" mass="0.8" pos="0 0 0"></inertial-->
-			<geom size="0.0160 0.0160 0.0160" type="box" name="object0" material="blue_block_mat" mass="0.8" condim="6" solimp="1.0 1.0 0.01"  solref="0.01 1" ></geom>
+			<geom size="0.0180 0.0180 0.0180" type="box" name="object0" material="blue_block_mat" mass="0.8" condim="6" solimp="1.0 1.0 0.01"  solref="0.01 1" ></geom>
 			<site name="site:object0" pos="0 0 0" size="0.012 0.012 0.012" rgba="1 0 0 1" type="sphere"></site>
 		</body>
 
