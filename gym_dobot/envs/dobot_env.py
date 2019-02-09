@@ -71,7 +71,7 @@ class DobotEnv(robot_env.RobotEnv):
     #     else:
     #         return -d
 
-    def compute_reward(self, achieved_goal, goal, info, obs, params):
+    def compute_reward(self, achieved_goal, goal, info, obs=None, params=None):
         # Compute distance between goal and the achieved goal.
         ret = 0
         d = goal_distance(achieved_goal, goal)
@@ -119,7 +119,7 @@ class DobotEnv(robot_env.RobotEnv):
         assert action.shape == (4,)
         action = action.copy()  # ensure that we don't change the action outside of this scope
         pos_ctrl, gripper_ctrl = action[:3], action[3]
-        print(gripper_ctrl)
+        #print(gripper_ctrl)
         #pos_ctrl_low = [-0.05,-0.05,-0.05]
         #pos_ctrl_high = [0.05,0.05,0.05]
         #pos_ctrl = np.clip(pos_ctrl,pos_ctrl_low,pos_ctrl_high)
