@@ -6,8 +6,8 @@ class DobotReachEnv(dobot_env.DobotEnv, utils.EzPickle):
     def __init__(self, reward_type='sparse',rand_dom=False,unity_remote=False):
         initial_qpos = {
             'dobot:slide0': 0.8,
-            'dobot:slide1': 1.147,
-            'dobot:slide2': -0.05,
+            'dobot:slide1': 1.2,
+            'dobot:slide2': -0.04,
         }
         dobot_env.DobotEnv.__init__(
             self, 'dobot/reach.xml', has_object=False, block_gripper=True, n_substeps=20,

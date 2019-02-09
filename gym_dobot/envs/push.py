@@ -6,8 +6,8 @@ class DobotPushEnv(dobot_env.DobotEnv, utils.EzPickle):
     def __init__(self, reward_type='sparse',rand_dom=False,unity_remote=False):
         initial_qpos = {
             'dobot:slide0': 0.8,
-            'dobot:slide1': 1.147,
-            'dobot:slide2': -0.05,
+            'dobot:slide1': 1.2,
+            'dobot:slide2': -0.04,
             'object0:joint': [1.25, 0.53, 0.032,  1., 0., 0., 0.],
         }
         dobot_env.DobotEnv.__init__(
