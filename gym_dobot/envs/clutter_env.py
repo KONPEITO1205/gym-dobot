@@ -71,7 +71,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
     # GoalEnv methods
     # ----------------------------
 
-    def compute_reward(self, achieved_goal, goal, info, obs, params):
+    def compute_reward(self, achieved_goal, goal, info, obs=None, params=None):
         # Compute distance between goal and the achieved goal.
         ret = 0
         d = goal_distance(achieved_goal, goal)
@@ -496,6 +496,10 @@ class DobotClutterEnv(robot_env.RobotEnv):
         pos[0] += 230
  
         return list(pos)
+
+    def set_goal(self,pos):
+        assert len(pos)==3
+        self.goal = np.array(pos)
 
     def set_object(self,pos,posList):
         object_xpos = pos
