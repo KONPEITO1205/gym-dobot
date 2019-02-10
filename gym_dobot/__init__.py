@@ -41,3 +41,10 @@ register(
     kwargs=kwargs,
     max_episode_steps=50,
 )
+
+register(
+    id='DobotHRLPush-v1'.format(suffix),
+    entry_point='gym_dobot.envs:DobotHRLPushEnv',
+    kwargs=kwargs,
+    max_episode_steps=50,
+)

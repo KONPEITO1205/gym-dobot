@@ -4,3 +4,5 @@ from gym_dobot.envs.clutter_pick_and_place import DobotClutterPickAndPlaceEnv
 from gym_dobot.envs.clutter_push import DobotClutterPushEnv
 from gym_dobot.envs.reach import DobotReachEnv
 
+from gym_dobot.envs.hrl_push import DobotHRLPushEnv
+
