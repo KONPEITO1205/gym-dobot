@@ -55,3 +55,10 @@ register(
     kwargs=kwargs,
     max_episode_steps=50,
 )
+
+register(
+    id='DobotHRLPick-v1'.format(suffix),
+    entry_point='gym_dobot.envs:DobotHRLPickEnv',
+    kwargs=kwargs,
+    max_episode_steps=50,
+)
