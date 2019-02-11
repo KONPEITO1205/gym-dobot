@@ -62,6 +62,9 @@
                 <joint armature="100" damping="1000" limited="true" solimplimit="0.99 0.999 0.01" solreflimit="0.01 1" type="slide"></joint>
             </default>
 
+            <default class="wall">
+                <geom size="0.0160 0.0160 0.0160" type="box" condim="6" material="yellow_block_mat" mass="0.8" solimp="1.0 1.0 0.01"  solref="0.01 1" ></geom>
+            </default>
             <default class="dobot:white">
                 <geom rgba="0.9 0.9 0.9 1.0"></geom>
             </default>
