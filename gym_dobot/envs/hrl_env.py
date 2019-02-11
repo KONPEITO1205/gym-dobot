@@ -118,6 +118,18 @@ class DobotHRLEnv(robot_env.RobotEnv):
         # Apply action to simulation.
         utils.ctrl_set_action(self.sim, action)
         utils.mocap_set_action(self.sim, action)
+        for i in range(self.sim.data.ncon):
+            # Note that the contact array has more than `ncon` entries,
+            # so be careful to only read the valid entries.
+            contact = self.sim.data.contact[i]
+            geom1 = contact.geom1
+            geom2 = contact.geom2
+            name1 = self.sim.model.geom_id2name(contact.geom1)
+            name2 = self.sim.model.geom_id2name(contact.geom2)
+            if "tray_base" not in [name1,name2]:
+                print('contact', i)
+                print('geom1', geom1, name1)
+                print('geom2', geom2, name2)
 
     def _get_obs(self):
         # positions
