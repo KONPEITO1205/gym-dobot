@@ -27,29 +27,29 @@
 		</body>
 
 		<body name="verticalwall" pos="0.8 0.784 0.025">
-				<geom pos="0 0 0" class="wall"/>
-				<geom pos="0 -0.033 0" class="wall"/>
-				<geom pos="0 -0.066 0" class="wall"/>
-				<geom pos="0 -0.099 0" class="wall"/>
-				<geom pos="0 -0.132 0" class="wall"/>
-				<geom pos="0 -0.165 0" class="wall"/>
-				<geom pos="0 -0.198 0" class="wall"/>
+				<geom pos="0 0 0" name="object1" class="wall"/>
+				<geom pos="0 -0.033 0" name="object2" class="wall"/>
+				<geom pos="0 -0.066 0" name="object4" class="wall"/>
+				<geom pos="0 -0.099 0" name="object5" class="wall"/>
+				<geom pos="0 -0.132 0" name="object6" class="wall"/>
+				<geom pos="0 -0.165 0" name="object7" class="wall"/>
+				<geom pos="0 -0.198 0" name="object8" class="wall"/>
 		</body>
 		
 		<body name="horizontalwall1" pos="0.62 0.685 0.025">
-				<geom pos="0 0 0" class="wall"/>
-				<geom pos="0.033 0 0" class="wall"/>
-				<geom pos="0.066 0 0" class="wall"/>
-				<geom pos="0.099 0 0" class="wall"/>
-				<geom pos="0.132 0 0" class="wall"/>
+				<geom pos="0 0 0" name="object9" class="wall"/>
+				<geom pos="0.033 0 0" name="object10" class="wall"/>
+				<geom pos="0.066 0 0" name="object11" class="wall"/>
+				<geom pos="0.099 0 0" name="object12" class="wall"/>
+				<geom pos="0.132 0 0" name="object13" class="wall"/>
 		</body>
 
 		<body name="horizontalwall2" pos="0.98 0.685 0.025">
-				<geom pos="0 0 0" class="wall"/>
-				<geom pos="-0.033 0 0" class="wall"/>
-				<geom pos="-0.066 0 0" class="wall"/>
-				<geom pos="-0.099 0 0" class="wall"/>
-				<geom pos="-0.132 0 0" class="wall"/>
+				<geom pos="0 0 0" name="object14" class="wall"/>
+				<geom pos="-0.033 0 0" name="object15" class="wall"/>
+				<geom pos="-0.066 0 0" name="object16" class="wall"/>
+				<geom pos="-0.099 0 0" name="object17" class="wall"/>
+				<geom pos="-0.132 0 0" name="object18" class="wall"/>
 		</body>
 
 
