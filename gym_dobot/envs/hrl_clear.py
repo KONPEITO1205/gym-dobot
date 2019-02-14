@@ -3,7 +3,7 @@ from gym_dobot.envs import hrl_env
 
 
 class DobotHRLClearEnv(hrl_env.DobotHRLEnv, utils.EzPickle):
-    def __init__(self, reward_type='sparse',clutter_num=10,rand_dom=False,unity_remote=False):
+    def __init__(self, reward_type='sparse',rand_dom=False,unity_remote=False):
         initial_qpos = {
             'dobot:slide0': 0.8,
             'dobot:slide1': 1.2,
@@ -15,5 +15,5 @@ class DobotHRLClearEnv(hrl_env.DobotHRLEnv, utils.EzPickle):
             gripper_extra_height=0.0, target_in_the_air=False, target_offset=0.0,
             obj_range=0.185, target_range=0.2, distance_threshold=0.05,
             initial_qpos=initial_qpos, reward_type=reward_type,
-            clutter_num=0,rand_dom=rand_dom,unity_remote=unity_remote)
+            rand_dom=rand_dom,unity_remote=unity_remote)
         utils.EzPickle.__init__(self)

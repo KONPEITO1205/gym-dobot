@@ -19,7 +19,7 @@ class DobotHRLEnv(robot_env.RobotEnv):
     def __init__(
         self, model_path, n_substeps, gripper_extra_height, block_gripper,
         has_object, target_in_the_air, target_offset, obj_range, target_range,
-        distance_threshold, initial_qpos, reward_type,clutter_num,rand_dom,unity_remote,
+        distance_threshold, initial_qpos, reward_type,rand_dom,unity_remote,
     ):
         """Initializes a new DobotHRL environment.
 
@@ -36,7 +36,6 @@ class DobotHRLEnv(robot_env.RobotEnv):
             distance_threshold (float): the threshold after which a goal is considered achieved
             initial_qpos (dict): a dictionary of joint names and values that define the initial configuration
             reward_type ('sparse' or 'dense'): the reward type, i.e. sparse or 
-            clutter_num (int 0-10) : the number of clutter objects to use
             rand_dom ('False' or 'True'): Whether to use domain randomization
         """
         self.gripper_extra_height = gripper_extra_height
@@ -48,8 +47,6 @@ class DobotHRLEnv(robot_env.RobotEnv):
         self.target_range = target_range
         self.distance_threshold = distance_threshold
         self.reward_type = reward_type
-        assert clutter_num <= 60
-        self.clutter_num = clutter_num
         self.rand_dom = rand_dom
         self.sent_target = False
         self.unity_remote = unity_remote
