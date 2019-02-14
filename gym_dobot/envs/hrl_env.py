@@ -5,6 +5,7 @@ import datetime
 import sys
 import os
 
+from shapely.geometry import Polygon, Point, MultiPoint
 
 
 def goal_distance(goal_a, goal_b):
@@ -50,6 +51,13 @@ class DobotHRLEnv(robot_env.RobotEnv):
         self.rand_dom = rand_dom
         self.sent_target = False
         self.unity_remote = unity_remote
+
+        if "Pick" in self.__class__.__name__ or "Clear" in self.__class__.__name__:
+            self.poly = Polygon([(0.604,0.653),(0.604,0.717),(0.768,0.717),(0.768,0.800),
+                (0.832,0.800),(0.832,0.717),(0.996,0.717),(0.996,0.653),
+                (0.832,0.653),(0.832,0.572),(0.768,0.572),(0.768,0.653)])
+        else:
+            self.poly = None
 
 
         super(DobotHRLEnv, self).__init__(
@@ -222,15 +230,21 @@ class DobotHRLEnv(robot_env.RobotEnv):
 
         # Randomize start position of object.
         if self.has_object:
-            pos = np.array([0.8,0.685])
-            size = np.array([0.158,0.10]) - 0.020
-            up = pos + size
-            low = pos - size
-            object_xpos = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1])])
-            object_qpos = self.sim.data.get_joint_qpos('object0:joint')
-            assert object_qpos.shape == (7,)
-            object_qpos[:2] = object_xpos
-            object_qpos[2] = 0.032
+            valid = False
+            while not valid:
+                low = np.array([0.62,0.586])
+                up = np.array([0.98,0.784])
+                object_xpos = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1])])
+                object_qpos = self.sim.data.get_joint_qpos('object0:joint')
+                assert object_qpos.shape == (7,)
+                object_qpos[:2] = object_xpos
+                object_qpos[2] = 0.025
+                point = Point(object_xpos)
+                if self.poly and self.poly.contains(point):
+                    print("Retrying")
+                    valid = False
+                else:
+                    valid = True
             self.sim.data.set_joint_qpos('object0:joint', object_qpos)
 
         self.sim.forward()
@@ -274,12 +288,17 @@ class DobotHRLEnv(robot_env.RobotEnv):
 
 
     def _sample_goal(self):
-        pos = np.array([0.8,0.685])
-        size = np.array([0.158,0.10]) - 0.020
-        up = pos + size
-        low = pos - size
-        goal = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1]),0.025])
-        # goal = np.array([0.97, 0.595, 0.148])
+        valid = False
+        while not valid:
+            low = np.array([0.62,0.586])
+            up = np.array([0.98,0.784])
+            goal = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1]),0.025])
+            point = Point(goal)
+            if self.poly and self.poly.contains(point):
+                print("Retrying Goal")
+                valid = False
+            else:
+                valid = True
 
 
         if self.has_object:
