@@ -41,7 +41,16 @@
 				<geom pos="0 0.096 0" class="wall"/>
 				<geom pos="0 0.128 0" class="wall"/>
 		</body>
-
+	<!-- <body name="polygon_markers" pos="0 0 0">
+		<geom pos = "0.699 0.803 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.763 0.803 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.763 0.627 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.699 0.627 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.836 0.567 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.900 0.567 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.900 0.743 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.836 0.743 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+	</body> -->
 
 	</worldbody>
 
