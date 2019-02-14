@@ -207,7 +207,8 @@ class DobotHRLEnv(robot_env.RobotEnv):
         self.episodeObs = []
         self.episodeInfo = []
         self.sim.set_state(self.initial_state)
-        self.clutter()
+        if "Clear" in self.__class__.__name__:
+            self.clutter()
         if self.viewer!= None and self.rand_dom: 
             for name in self.sim.model.geom_names:
                 self.modder.rand_all(name)
@@ -241,25 +242,36 @@ class DobotHRLEnv(robot_env.RobotEnv):
         return True
 
     def clutter(self):
-        count = self.clutter_num
-        # nums = list(range(1,61))
-        for i in range(1,count+1):
-            # choice = self.np_random.choice(nums)
-            # del nums[nums.index(choice)]
-            choice = i
-            object_name = "object{}:joint".format(choice)
-            
-            pos = np.array([0.8,0.685])
-            size = np.array([0.158,0.10]) - 0.020
-            up = pos + size
-            low = pos - size
-            object_xpos = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1])])
-
+        x = 0.8
+        z = 0.025
+        y = 0.784
+        dy = [0,-0.033,-0.066,-0.099,-0.132,-0.165,-0.198]
+        for i in range(1,8):
+            object_name = "object{}:joint".format(i)
+            object_xpos = np.array([x,y+dy[i-1],z])
             object_qpos = self.sim.data.get_joint_qpos(object_name)
             assert object_qpos.shape == (7,)
-            object_qpos[:2] = object_xpos
-            object_qpos[2] = 0.032
-            object_qpos[2] += self.np_random.uniform(0.005, 0.15)
+            object_qpos[:3] = object_xpos
+            self.sim.data.set_joint_qpos(object_name, object_qpos)
+        
+        z = 0.025
+        y = 0.685
+        x = 0.62
+        x2 = 0.98
+        dx = [0,0.033,0.066,0.099,0.132]
+        for i in range(8,13):
+            object_name = "object{}:joint".format(i)
+            object_xpos = np.array([x+dx[i-8],y,z])
+            object_qpos = self.sim.data.get_joint_qpos(object_name)
+            assert object_qpos.shape == (7,)
+            object_qpos[:3] = object_xpos
+            self.sim.data.set_joint_qpos(object_name, object_qpos)
+
+            object_name = "object{}:joint".format(i+5)
+            object_xpos = np.array([x2-dx[i-8],y,z])
+            object_qpos = self.sim.data.get_joint_qpos(object_name)
+            assert object_qpos.shape == (7,)
+            object_qpos[:3] = object_xpos
             self.sim.data.set_joint_qpos(object_name, object_qpos)
 
 
