@@ -53,11 +53,14 @@ class DobotHRLEnv(robot_env.RobotEnv):
         self.unity_remote = unity_remote
 
         if "Pick" in self.__class__.__name__ or "Clear" in self.__class__.__name__:
-            self.poly = Polygon([(0.604,0.653),(0.604,0.717),(0.768,0.717),(0.768,0.800),
+            self.polygons = [Polygon([(0.604,0.653),(0.604,0.717),(0.768,0.717),(0.768,0.800),
                 (0.832,0.800),(0.832,0.717),(0.996,0.717),(0.996,0.653),
-                (0.832,0.653),(0.832,0.572),(0.768,0.572),(0.768,0.653)])
+                (0.832,0.653),(0.832,0.572),(0.768,0.572),(0.768,0.653)])]
+        elif "Maze" in self.__class__.__name__:
+            self.polygons = [Polygon([(0.699,0.803),(0.763,0.803),(0.763,0.627),(0.699,0.627)]),
+                            Polygon([(0.836,0.567),(0.900,0.567),(0.900,0.743),(0.836,0.743)])]
         else:
-            self.poly = None
+            self.polygons = None
 
 
         super(DobotHRLEnv, self).__init__(
@@ -240,11 +243,13 @@ class DobotHRLEnv(robot_env.RobotEnv):
                 object_qpos[:2] = object_xpos
                 object_qpos[2] = 0.025
                 point = Point(object_xpos)
-                if self.poly and self.poly.contains(point):
-                    print("Retrying")
-                    valid = False
-                else:
-                    valid = True
+                valid = True
+                if self.polygons:
+                    for poly in self.polygons:
+                        if poly.contains(point):
+                            print("Retrying")
+                            valid = False
+                            break
             self.sim.data.set_joint_qpos('object0:joint', object_qpos)
 
         self.sim.forward()
@@ -294,11 +299,13 @@ class DobotHRLEnv(robot_env.RobotEnv):
             up = np.array([0.98,0.784])
             goal = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1]),0.025])
             point = Point(goal)
-            if self.poly and self.poly.contains(point):
-                print("Retrying Goal")
-                valid = False
-            else:
-                valid = True
+            valid = True
+            if self.polygons:
+                for poly in self.polygons:
+                    if poly.contains(point):
+                        print("Retrying Goal")
+                        valid = False
+                        break
 
 
         if self.has_object:
