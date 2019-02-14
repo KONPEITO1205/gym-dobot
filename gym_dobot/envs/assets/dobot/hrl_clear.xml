@@ -28,6 +28,22 @@
 
 		<include file="clutterMin.xml"></include>
 
+	<!-- <body name="polygon_markers" pos="0 0 0">
+		<geom pos = "0.768 0.800 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.832 0.800 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.768 0.572 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.832 0.572 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.768 0.717 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.832 0.717 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.768 0.653 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.832 0.653 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		
+		<geom pos = "0.604 0.717 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.604 0.653 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.996 0.717 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+		<geom pos = "0.996 0.653 0.025" type="sphere" rgba="0 1 0.5 1" size="0.015" conaffinity="0" contype="0"/>
+	</body> -->
+
 
 	</worldbody>
 
