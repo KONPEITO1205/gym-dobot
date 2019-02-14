@@ -62,3 +62,10 @@ register(
     kwargs=kwargs,
     max_episode_steps=50,
 )
+
+register(
+    id='DobotHRLClear-v1'.format(suffix),
+    entry_point='gym_dobot.envs:DobotHRLPickEnv',
+    kwargs=kwargs,
+    max_episode_steps=50,
+)
