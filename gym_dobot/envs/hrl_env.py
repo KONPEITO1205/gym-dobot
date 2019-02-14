@@ -247,7 +247,7 @@ class DobotHRLEnv(robot_env.RobotEnv):
                 if self.polygons:
                     for poly in self.polygons:
                         if poly.contains(point):
-                            print("Retrying")
+                            # print("Retrying")
                             valid = False
                             break
             self.sim.data.set_joint_qpos('object0:joint', object_qpos)
@@ -303,7 +303,7 @@ class DobotHRLEnv(robot_env.RobotEnv):
             if self.polygons:
                 for poly in self.polygons:
                     if poly.contains(point):
-                        print("Retrying Goal")
+                        # print("Retrying Goal")
                         valid = False
                         break
 
