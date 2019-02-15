@@ -78,7 +78,7 @@ class RobotEnv(gym.GoalEnv):
         done = False
         info = {
             'is_success': self._is_success(obs['achieved_goal'], self.goal),
-            'collision': self.collision
+            'info_collision': self.collision
         }
         reward = self.compute_reward(obs['achieved_goal'], self.goal, info, obsTemp, params)
         self.episodeInfo.append(info)
