@@ -85,8 +85,6 @@ class DobotHRLEnv(robot_env.RobotEnv):
         d = goal_distance(achieved_goal, goal)
         if self.reward_type == 'sparse':
             ret = -(d > self.distance_threshold).astype(np.float32)
-            if "Clear" in self.__class__.__name__ and self.if_collision():
-                ret = -2
             if self.unity_remote:
                 self.remote.settargetstatus(int(ret))
         else:
@@ -98,6 +96,8 @@ class DobotHRLEnv(robot_env.RobotEnv):
     # ----------------------------
 
     def _step_callback(self):
+        if "Clear" in self.__class__.__name__ and self.if_collision():
+            self.collision = True
         if self.block_gripper:
             self.sim.data.set_joint_qpos('dobot:l_gripper_joint', 0.)
             self.sim.data.set_joint_qpos('dobot:r_gripper_joint', 0.)

@@ -67,6 +67,7 @@ class RobotEnv(gym.GoalEnv):
         action = np.clip(action, self.action_space.low, self.action_space.high)
         self._set_action(action)
         self.sim.step()
+        self.collision = False
         self._step_callback()
         obs = self._get_obs()
         obsTemp = obs['observation']
@@ -77,6 +78,7 @@ class RobotEnv(gym.GoalEnv):
         done = False
         info = {
             'is_success': self._is_success(obs['achieved_goal'], self.goal),
+            'collision': self.collision
         }
         reward = self.compute_reward(obs['achieved_goal'], self.goal, info, obsTemp, params)
         self.episodeInfo.append(info)
