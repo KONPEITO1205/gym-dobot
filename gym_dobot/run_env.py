@@ -6,7 +6,7 @@ import numpy as np
 
 
 @click.command()
-@click.option('--env', default="DobotHRLMazeEnv", help='Which environment to run (Eg. - DobotReachEnv)')
+@click.option('--env', default="DobotHRLClearEnv", help='Which environment to run (Eg. - DobotReachEnv)')
 @click.option('--render',default=1,help='Whether to render the environment')
 @click.option('--steps',default=150,help='Number of timesteps to run the environment each time')
 @click.option('--clutter',default=40,help='Number of clutter objects for clutter environments')
