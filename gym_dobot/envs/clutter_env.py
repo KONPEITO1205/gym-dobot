@@ -71,7 +71,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
     # GoalEnv methods
     # ----------------------------
 
-    def compute_reward(self, achieved_goal, goal, info, obs=None, params=None):
+    def compute_reward(self, achieved_goal, goal, info):#, obs=None, params=None):
         # Compute distance between goal and the achieved goal.
         ret = 0
         d = goal_distance(achieved_goal, goal)
@@ -81,7 +81,8 @@ class DobotClutterEnv(robot_env.RobotEnv):
                 self.remote.settargetstatus(int(ret))
         else:
             ret = -d
-        clutterNumber = 0
+        return ret
+        # clutterNumber = 0
         # clutterPos = []
         # if params['clutter_reward'] == 1:
         #     # List of positions of clutter boxes
@@ -92,7 +93,7 @@ class DobotClutterEnv(robot_env.RobotEnv):
         #         if np.linalg.norm(object0Pos[:2]-clutterPos[i][:2]) < 0.050:
         #             clutterNumber += 1
         # # print(clutterPos,'clutter')
-        return ret-clutterNumber
+        # return ret-clutterNumber
 
     # def compute_reward(self, achieved_goal, goal, info, obs, params):
     #     # Compute distance between goal and the achieved goal.

@@ -13,7 +13,7 @@ except ImportError as e:
     raise error.DependencyNotInstalled("{}. (HINT: you need to install mujoco_py, and also perform the setup instructions here: https://github.com/openai/mujoco-py/.)".format(e))
 
 
-class RobotEnv(gym.GoalEnv):
+class RobotPendulumEnv(gym.GoalEnv):
     def __init__(self, model_path, initial_qpos, n_actions, n_substeps):
         if model_path.startswith('/'):
             fullpath = model_path
@@ -35,7 +35,7 @@ class RobotEnv(gym.GoalEnv):
         }
 
         self.seed()
-        self._env_setup(initial_qpos=initial_qpos)
+        # self._env_setup(initial_qpos=initial_qpos)
         self.initial_state = copy.deepcopy(self.sim.get_state())
 
         self.goal = self._sample_goal()
@@ -64,11 +64,12 @@ class RobotEnv(gym.GoalEnv):
         return [seed]
 
     def step(self, action):
-        action = np.clip(action, self.action_space.low, self.action_space.high)
-        self._set_action(action)
+        self.sim.data.ctrl[:] = action
+        # action = np.clip(action, self.action_space.low, self.action_space.high)
+        # self._set_action(action)
         self.sim.step()
         # self.collision = False
-        self._step_callback()
+        # self._step_callback()
         obs = self._get_obs()
         # obsTemp = obs['observation']
         # params = {}
@@ -97,7 +98,7 @@ class RobotEnv(gym.GoalEnv):
         if goal==None:
             self.goal = self._sample_goal().copy()
         else:
-            assert len(goal)==3
+            # assert len(goal)==3
             self.goal = np.array(goal)
         obs = self._get_obs()
         self.episodeObs.append(obs)
@@ -109,7 +110,7 @@ class RobotEnv(gym.GoalEnv):
             self.viewer = None
 
     def render(self, mode='human'):
-        self._render_callback()
+        # self._render_callback()
         if mode == 'rgb_array':
             self._get_viewer().render()
             # window size used for old mujoco-py:
@@ -123,7 +124,7 @@ class RobotEnv(gym.GoalEnv):
     def _get_viewer(self):
         if self.viewer is None:
             self.viewer = mujoco_py.MjViewer(self.sim)
-            self._viewer_setup()
+            # self._viewer_setup()
         return self.viewer
 
     # Extension methods

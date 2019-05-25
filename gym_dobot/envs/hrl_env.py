@@ -4,6 +4,7 @@ from mujoco_py.generated import const
 import datetime
 import sys
 import os
+import cv2
 
 from shapely.geometry import Polygon, Point, MultiPoint
 
@@ -79,7 +80,7 @@ class DobotHRLEnv(robot_env.RobotEnv):
     # GoalEnv methods
     # ----------------------------
 
-    def compute_reward(self, achieved_goal, goal, info, obs=None, params=None):
+    def compute_reward(self, achieved_goal, goal, info):#, obs=None, params=None):
         # Compute distance between goal and the achieved goal.
         ret = 0
         d = goal_distance(achieved_goal, goal)
@@ -89,7 +90,6 @@ class DobotHRLEnv(robot_env.RobotEnv):
                 self.remote.settargetstatus(int(ret))
         else:
             ret = -d
-
         return ret
 
     # RobotEnv methods
@@ -129,8 +129,44 @@ class DobotHRLEnv(robot_env.RobotEnv):
         utils.ctrl_set_action(self.sim, action)
         utils.mocap_set_action(self.sim, action)
 
+    # def _get_obs(self):
+    #     # positions
+    #     grip_pos = self.sim.data.get_site_xpos('dobot:grip')
+    #     dt = self.sim.nsubsteps * self.sim.model.opt.timestep
+    #     grip_velp = self.sim.data.get_site_xvelp('dobot:grip') * dt
+    #     robot_qpos, robot_qvel = utils.robot_get_obs(self.sim)
+    #     if self.has_object:
+    #         object_pos = self.sim.data.get_site_xpos('site:object0')
+    #         # rotations
+    #         object_rot = rotations.mat2euler(self.sim.data.get_site_xmat('site:object0'))
+    #         # velocities
+    #         object_velp = self.sim.data.get_site_xvelp('site:object0') * dt
+    #         object_velr = self.sim.data.get_site_xvelr('site:object0') * dt
+    #         # gripper state
+    #         object_rel_pos = object_pos - grip_pos
+    #         object_velp -= grip_velp
+    #     else:
+    #         object_pos = object_rot = object_velp = object_velr = object_rel_pos = np.zeros(0)
+    #     gripper_state = robot_qpos[-2:]
+    #     gripper_vel = robot_qvel[-2:] * dt  # change to a scalar if the gripper is made symmetric
+
+    #     if not self.has_object:
+    #         achieved_goal = grip_pos.copy()
+    #     else:
+    #         achieved_goal = np.squeeze(object_pos.copy())
+    #     obs = np.concatenate([
+    #         grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, object_rot.ravel(),
+    #         object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
+    #     ])
+
+    #     return {
+    #         'observation': obs.copy(),
+    #         'achieved_goal': achieved_goal.copy(),
+    #         'desired_goal': self.goal.copy(),
+    #     }
+
+
     def _get_obs(self):
-        # positions
         grip_pos = self.sim.data.get_site_xpos('dobot:grip')
         dt = self.sim.nsubsteps * self.sim.model.opt.timestep
         grip_velp = self.sim.data.get_site_xvelp('dobot:grip') * dt
@@ -154,8 +190,16 @@ class DobotHRLEnv(robot_env.RobotEnv):
             achieved_goal = grip_pos.copy()
         else:
             achieved_goal = np.squeeze(object_pos.copy())
+
+        # self.render()
+        # image = self.capture()
+        # obs = np.concatenate([
+        #     grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, object_rot.ravel(),
+        #     object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
+        # ])
+
         obs = np.concatenate([
-            grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, object_rot.ravel(),
+            grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, object_rot.ravel(),#, image.ravel()
             object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
         ])
 
@@ -178,6 +222,8 @@ class DobotHRLEnv(robot_env.RobotEnv):
         self.viewer.cam.azimuth = 145.
         self.viewer.cam.elevation = -25.
 
+        self.viewer.cam.fixedcamid = 0
+        self.viewer.cam.type = const.CAMERA_FIXED
         # self.viewer.cam.fixedcamid = 0
         # self.viewer.cam.type = 2
         self.viewer._hide_overlay = True
@@ -330,7 +376,7 @@ class DobotHRLEnv(robot_env.RobotEnv):
 
         # Move end effector into position.
         #gripper_target = np.array([0.001, -1.4, -0.431 + self.gripper_extra_height]) + self.sim.data.get_site_xpos('dobot:grip')
-        gripper_target = np.array([0.8,1,0.37])
+        gripper_target = np.array([0.8,1,-0.37])
         gripper_rotation = np.array([-1, 0., 0., 0])
         self.sim.data.set_mocap_pos('dobot:mocap', gripper_target)
         self.sim.data.set_mocap_quat('dobot:mocap', gripper_rotation)
@@ -353,6 +399,9 @@ class DobotHRLEnv(robot_env.RobotEnv):
             self.viewer.cam.type = const.CAMERA_FIXED
             width, height = 1920, 1080
             img = self._get_viewer().read_pixels(width, height, depth=depth)
+            if not depth:
+                img = img[350:623,726:1193]
+                img = cv2.resize(img, (50,50))
             # print(img[:].shape)
             # # depth_image = img[:][:][1][::-1] # To visualize the depth image(depth=True)
             # # rgb_image = img[:][:][0][::-1] # To visualize the depth image(depth=True)
@@ -360,7 +409,12 @@ class DobotHRLEnv(robot_env.RobotEnv):
             # rgb_image = img[:][:][0][::-1]
             if depth:
                 rgb_image = img[0][::-1]
+                rgb_image = rgb_image[458:730,726:1193]
+                rgb_image = cv2.resize(rgb_image, (50,50))
                 depth_image = np.expand_dims(img[1][::-1],axis=2)
+                depth_image = depth_image[458:730,726:1193]
+                depth_image = cv2.resize(depth_image, (50,50))
+                depth_image = np.reshape(depth_image, (50,50,1))
                 rgbd_image = np.concatenate((rgb_image,depth_image),axis=2)
                 return rgbd_image
             else:
