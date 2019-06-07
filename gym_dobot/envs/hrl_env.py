@@ -8,6 +8,13 @@ import cv2
 
 from shapely.geometry import Polygon, Point, MultiPoint
 
+try:
+    import mujoco_py
+    from mujoco_py.modder import TextureModder,CameraModder,LightModder
+except ImportError as e:
+    raise error.DependencyNotInstalled("{}. (HINT: you need to install mujoco_py, and also perform the setup instructions here: https://github.com/openai/mujoco-py/.)".format(e))
+
+
 
 def goal_distance(goal_a, goal_b):
     assert goal_a.shape == goal_b.shape
@@ -21,7 +28,7 @@ class DobotHRLEnv(robot_env.RobotEnv):
     def __init__(
         self, model_path, n_substeps, gripper_extra_height, block_gripper,
         has_object, target_in_the_air, target_offset, obj_range, target_range,
-        distance_threshold, initial_qpos, reward_type,rand_dom,unity_remote,
+        distance_threshold, initial_qpos, reward_type,rand_dom,unity_remote, randomize=False,
     ):
         """Initializes a new DobotHRL environment.
 
@@ -52,6 +59,9 @@ class DobotHRLEnv(robot_env.RobotEnv):
         self.rand_dom = rand_dom
         self.sent_target = False
         self.unity_remote = unity_remote
+        self.randomize = randomize
+        self.model_path = model_path
+        self.count = 0
 
         if "Pick" in self.__class__.__name__ or "Clear" in self.__class__.__name__:
             self.polygons = [Polygon([(0.604,0.653),(0.604,0.717),(0.768,0.717),(0.768,0.800),
@@ -192,6 +202,41 @@ class DobotHRLEnv(robot_env.RobotEnv):
             achieved_goal = np.squeeze(object_pos.copy())
 
         # self.render()
+        import cv2
+        blackBox = grip_pos
+        redCircle = self.goal
+        blueBox = object_pos
+        height = 273 
+        width = 467
+        img = np.zeros((height,width,3), np.uint8)
+        img[:,:] = (16,163,127)
+        # Updated
+        # x_range = np.random.uniform(0.6, 1.)
+        # y_range = np.random.uniform(0.57, 0.8)
+        half_block_len = int(38/2)
+        gripper_len = 12
+        sphere_rad = 18
+        # Mark the block position
+        mapBlue = self.map_cor(blueBox)
+        xx = int(mapBlue[0])
+        yy = int(mapBlue[1])
+        img[xx-half_block_len:xx+half_block_len,yy-half_block_len:yy+half_block_len] = (84,54,218)
+
+        # Mark the sphere position
+        mapRed = self.map_cor(redCircle)
+        xx = int(mapRed[0])
+        yy = int(mapRed[1])
+        cv2.circle(img,(yy,xx), 16, (255,0,0), -1)
+
+        # Mark the gripper position
+        mapBlack = self.map_cor(blackBox)
+        xx = int(mapBlack[0])
+        yy = int(mapBlack[1])
+        img[xx-gripper_len:xx+gripper_len,yy-gripper_len:yy+gripper_len] = (0,0,0)
+
+        image = cv2.resize(img, (50,50))
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)[:,:]
+        # cv2.imwrite('./images/test'+str(self.count)+'.png',cv2.cvtColor(img, cv2.COLOR_RGB2BGR)[:,:])
         # image = self.capture()
         # obs = np.concatenate([
         #     grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, object_rot.ravel(),
@@ -199,8 +244,8 @@ class DobotHRLEnv(robot_env.RobotEnv):
         # ])
 
         obs = np.concatenate([
-            grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, object_rot.ravel(),#, image.ravel()
-            object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
+            grip_pos, object_pos.ravel(), object_rel_pos.ravel(), image.ravel(), #object_rot.ravel(),
+            # object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
         ])
 
         return {
@@ -209,6 +254,16 @@ class DobotHRLEnv(robot_env.RobotEnv):
             'desired_goal': self.goal.copy(),
         }
 
+    def map_cor(self, pos,X1=0.0,X2=273.0,Y1=0.,Y2=467.0,x1=0.8,x2=0.57,y1=0.6,y2=1.0):
+        if pos[0] > 1:
+            return np.array([193., 180.])
+        y = pos[0]
+        x = pos[1]
+        X = X1 + ( (x-x1) * (X2-X1) / (x2-x1) )
+        Y = Y1 + ( (y-y1) * (Y2-Y1) / (y2-y1) )
+        # X=X2+((X1-X2)/x2)*x
+        # Y=Y2+((Y1-Y2)/y2)*y
+        return(np.array([X,Y]))
 
     def _viewer_setup(self):
         body_id = self.sim.model.body_name2id('dobot:gripper_link')
@@ -234,6 +289,70 @@ class DobotHRLEnv(robot_env.RobotEnv):
         site_id = self.sim.model.site_name2id('target0')
         self.sim.model.site_pos[site_id] = self.goal - sites_offset[0]
         self.sim.forward()
+
+    def randomize_env(self):
+        import xml.etree.cElementTree as ET
+        tree = ET.ElementTree(file='/home/vrsystem/gitrep/gym-dobot/gym_dobot/envs/assets/dobot/hrl_maze_temp.xml')
+        index = tree.find('worldbody')
+        sizeLeft = np.random.randint(6)
+        sizeRight = np.random.randint(6)
+
+        angleLeft = 0
+        angleRight = 0
+
+        if np.random.randint(2) == 1:
+            angleLeft = 1.57
+
+        if np.random.randint(2) == 1:
+            angleRight = 1.57
+
+        x1 = np.random.uniform(0.615, 0.98)
+        x1_pi = np.random.uniform(0.615,0.854)
+        y1 = np.random.uniform(0.718, 0.787)
+        y1_pi = np.random.uniform(0.587,0.787)
+
+        HEIGHT = 0.025
+
+        for child in index:
+            if child.tag == 'body' and child.attrib['name'] == 'leftwall':
+                if angleLeft == 0:
+                    child.attrib['pos'] = "{} {} {}".format(x1,y1,HEIGHT)
+                else:
+                    child.attrib['pos'] = "{} {} {}".format(x1_pi,y1_pi,HEIGHT)
+                child.attrib['euler'] = "{} {} {}".format(0,0,angleLeft)
+                for key in range(5 - sizeLeft):
+                    del child[len(child)-1]
+            elif child.tag == 'body' and child.attrib['name'] == 'rightwall':
+                if angleRight == 0:
+                    child.attrib['pos'] = "{} {} {}".format(x1,y1,HEIGHT)
+                else:
+                    child.attrib['pos'] = "{} {} {}".format(x1_pi,y1_pi,HEIGHT)
+                child.attrib['euler'] = "{} {} {}".format(0,0,angleRight)
+                for key in range(5 - sizeRight):
+                    del child[len(child)-1]
+
+        tree.write('/home/vrsystem/gitrep/gym-dobot/gym_dobot/envs/assets/dobot/hrl_maze.xml')
+
+    def randomize_environ(self):
+        # print(self.sim.data)#.get_joint_qpos('object0:joint')
+        # id1 = self.sim.model.body_name2id('rightwall')
+        # print(self.sim.data.body_xpos[id1])
+        # # self.sim.data.body_xpos[id1][1] = 1
+        # print(self.sim.data.qpos)
+        x1_left = np.random.uniform(0.615, 0.98)
+        y1_left = np.random.uniform(0.65, 0.787)
+        x1_right = np.random.uniform(0.65, 0.98)
+        y1_right = np.random.uniform(0.65, 0.787)
+        object_qpos_left = self.sim.data.get_joint_qpos('leftwall')
+        object_qpos_left[0] = x1_left
+        object_qpos_left[1] = y1_left
+
+        object_qpos_right = self.sim.data.get_joint_qpos('rightwall')
+        object_qpos_right[0] = x1_right
+        object_qpos_right[1] = y1_right
+        self.sim.data.set_joint_qpos('leftwall', object_qpos_left)
+        self.sim.data.set_joint_qpos('rightwall', object_qpos_right)
+
 
 
     def _reset_sim(self):
@@ -303,6 +422,20 @@ class DobotHRLEnv(robot_env.RobotEnv):
         self.sim.forward()
         if self.unity_remote:
             self.sent_target=False
+
+        if self.randomize:
+            # Randomize the walls to make it a dynamic environment
+            self.randomize_environ()
+            # if self.model_path.startswith('/'):
+            #     fullpath = self.model_path
+            # else:
+            #     fullpath = os.path.join(os.path.dirname(__file__), 'assets', self.model_path)
+            # if not os.path.exists(fullpath):
+            #     raise IOError('File {} does not exist'.format(fullpath))
+
+            # model = mujoco_py.load_model_from_path(fullpath)
+            # self.sim = mujoco_py.MjSim(model, nsubsteps=20)
+
         return True
 
     def clutter(self):
@@ -401,7 +534,7 @@ class DobotHRLEnv(robot_env.RobotEnv):
             img = self._get_viewer().read_pixels(width, height, depth=depth)
             if not depth:
                 img = img[350:623,726:1193]
-                img = cv2.resize(img, (50,50))
+                # img = cv2.resize(img, (500,500))
             # print(img[:].shape)
             # # depth_image = img[:][:][1][::-1] # To visualize the depth image(depth=True)
             # # rgb_image = img[:][:][0][::-1] # To visualize the depth image(depth=True)

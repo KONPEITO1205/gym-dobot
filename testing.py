@@ -1,5 +1,7 @@
 import gym
-env = gym.make('FetchTwoGoalReachDense-v1')
+from gym_dobot.envs import DobotHRLMazeEnv
+
+env = gym.make('DobotHRLMaze-v1')
 env.reset()
 
 for i in range(1000):

@@ -277,9 +277,9 @@ class DobotEnv(robot_env.RobotEnv):
 
         if self.has_object:
             if self.target_in_the_air and self.np_random.uniform() < 1.0:
-                goal[2] = 0.148#self.np_random.uniform(0.028, 0.148)
+                goal[2] = 0.028#0.148#self.np_random.uniform(0.028, 0.148)
         else:
-            goal[2] = self.np_random.uniform(0.028, 0.148)
+            goal[2] = 0.028#self.np_random.uniform(0.028, 0.148)
 
         return goal.copy()
         

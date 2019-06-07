@@ -4,16 +4,26 @@ import cv2
 import numpy as np
 
 #env = gym.make('DobotHRLPendulum-v1')
-env = gym.make('FetchPickAndPlace-v1')
+env = gym.make('FetchReach-v1')
+#env = gym.make('CartPole-v0')
 
 
 while True:
 	env.reset()
-	for i in range(150):
+	temp = 1
+	import time
+	time.sleep(1)
+	for i in range(90):
+		import time
+		if i%9 == 0:
+			time.sleep(.5)
+			# temp = -temp
 		env.render()
 		# img = env.env.capture(depth=False)
-		obs, _, _, _ = env.step(env.action_space.sample())
-		#img = obs['observation'][9:].reshape((50,50,3))
+		xx = env.action_space.sample()
+		xx[:2] = temp * 0.1
+		obs, _, _, _ = env.step(xx)
+		# img = obs['observation'][9:].reshape((50,50,3))
 		# cv2.imwrite('./images/test'+str(i)+'.png',img)
-		# cv2.imwrite('./images/test'+str(i)+'.png',cv2.cvtColor(img, cv2.COLOR_RGB2BGR)[:,:])
+	#	cv2.imwrite('./images/test'+str(i)+'.png',cv2.cvtColor(img, cv2.COLOR_RGB2BGR)[:,:])
 

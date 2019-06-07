@@ -186,3 +186,7 @@ class RobotEnv(gym.GoalEnv):
     def _setPos(self, goal, obs, params):
         """  Function to set the positions   """
         pass
+
+    def randomize_env(self):
+        # Randomize the environment
+        pass
