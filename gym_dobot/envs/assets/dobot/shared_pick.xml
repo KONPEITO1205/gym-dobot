@@ -66,7 +66,7 @@
                 <geom size="0.0160 0.0160 0.0160" type="box" condim="6" material="yellow_block_mat" mass="0.8" solimp="1.0 1.0 0.01"  solref="0.01 1" ></geom>
             </default>
             <default class="dobot:white">
-                <geom rgba="0.9 0.9 0.9 .0"></geom>
+                <geom rgba="0.9 0.9 0.9 1.0"></geom>
             </default>
             <default class="dobot:black">
                 <geom rgba="0.2 0.2 0.2 1.0"></geom>

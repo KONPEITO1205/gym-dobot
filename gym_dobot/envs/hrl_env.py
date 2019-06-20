@@ -102,6 +102,12 @@ class DobotHRLEnv(robot_env.RobotEnv):
             ret = -d
         return ret
 
+    def set_subgoal(self, name, action):
+        site_id = self.sim.model.site_name2id(name)
+        sites_offset = (self.sim.data.site_xpos - self.sim.model.site_pos).copy()
+        self.sim.model.site_pos[site_id] = action - sites_offset[0]
+        self.sim.model.site_rgba[site_id][3] = 1
+
     # RobotEnv methods
     # ----------------------------
 
@@ -202,51 +208,54 @@ class DobotHRLEnv(robot_env.RobotEnv):
             achieved_goal = np.squeeze(object_pos.copy())
 
         # self.render()
-        import cv2
-        blackBox = grip_pos
-        redCircle = self.goal
-        blueBox = object_pos
-        height = 273 
-        width = 467
-        img = np.zeros((height,width,3), np.uint8)
-        img[:,:] = (16,163,127)
-        # Updated
-        # x_range = np.random.uniform(0.6, 1.)
-        # y_range = np.random.uniform(0.57, 0.8)
-        half_block_len = int(38/2)
-        gripper_len = 12
-        sphere_rad = 18
-        # Mark the block position
-        mapBlue = self.map_cor(blueBox)
-        xx = int(mapBlue[0])
-        yy = int(mapBlue[1])
-        img[xx-half_block_len:xx+half_block_len,yy-half_block_len:yy+half_block_len] = (84,54,218)
+        # -------------------------------------------------------------------
+        # import cv2
+        # blackBox = grip_pos
+        # redCircle = self.goal
+        # blueBox = object_pos
+        # height = 273 
+        # width = 467
+        # img = np.zeros((height,width,3), np.uint8)
+        # img[:,:] = (16,163,127)
+        # # Updated
+        # # x_range = np.random.uniform(0.6, 1.)
+        # # y_range = np.random.uniform(0.57, 0.8)
+        # half_block_len = int(38/2)
+        # gripper_len = 12
+        # sphere_rad = 18
+        # # Mark the block position
+        # mapBlue = self.map_cor(blueBox)
+        # xx = int(mapBlue[0])
+        # yy = int(mapBlue[1])
+        # img[xx-half_block_len:xx+half_block_len,yy-half_block_len:yy+half_block_len] = (84,54,218)
 
-        # Mark the sphere position
-        mapRed = self.map_cor(redCircle)
-        xx = int(mapRed[0])
-        yy = int(mapRed[1])
-        cv2.circle(img,(yy,xx), 16, (255,0,0), -1)
+        # # Mark the sphere position
+        # mapRed = self.map_cor(redCircle)
+        # xx = int(mapRed[0])
+        # yy = int(mapRed[1])
+        # cv2.circle(img,(yy,xx), 16, (255,0,0), -1)
 
-        # Mark the gripper position
-        mapBlack = self.map_cor(blackBox)
-        xx = int(mapBlack[0])
-        yy = int(mapBlack[1])
-        img[xx-gripper_len:xx+gripper_len,yy-gripper_len:yy+gripper_len] = (0,0,0)
+        # # Mark the gripper position
+        # mapBlack = self.map_cor(blackBox)
+        # xx = int(mapBlack[0])
+        # yy = int(mapBlack[1])
+        # img[xx-gripper_len:xx+gripper_len,yy-gripper_len:yy+gripper_len] = (0,0,0)
 
-        image = cv2.resize(img, (50,50))
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)[:,:]
+        # image = cv2.resize(img, (50,50))
+        # image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)[:,:]
+        # -------------------------------------------------------------------
+        
         # cv2.imwrite('./images/test'+str(self.count)+'.png',cv2.cvtColor(img, cv2.COLOR_RGB2BGR)[:,:])
         # image = self.capture()
-        # obs = np.concatenate([
-        #     grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, object_rot.ravel(),
-        #     object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
-        # ])
-
         obs = np.concatenate([
-            grip_pos, object_pos.ravel(), object_rel_pos.ravel(), image.ravel(), #object_rot.ravel(),
-            # object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
+            grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, object_rot.ravel(),
+            object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
         ])
+
+        # obs = np.concatenate([
+        #     grip_pos, object_pos.ravel(), object_rel_pos.ravel(), image.ravel(), #object_rot.ravel(),
+        #     # object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
+        # ])
 
         return {
             'observation': obs.copy(),
@@ -277,8 +286,8 @@ class DobotHRLEnv(robot_env.RobotEnv):
         self.viewer.cam.azimuth = 145.
         self.viewer.cam.elevation = -25.
 
-        self.viewer.cam.fixedcamid = 0
-        self.viewer.cam.type = const.CAMERA_FIXED
+        # self.viewer.cam.fixedcamid = 0
+        # self.viewer.cam.type = const.CAMERA_FIXED
         # self.viewer.cam.fixedcamid = 0
         # self.viewer.cam.type = 2
         self.viewer._hide_overlay = True
@@ -528,8 +537,8 @@ class DobotHRLEnv(robot_env.RobotEnv):
         if self.viewer == None:
             pass
         else:
-            self.viewer.cam.fixedcamid = 0
-            self.viewer.cam.type = const.CAMERA_FIXED
+            # self.viewer.cam.fixedcamid = 0
+            # self.viewer.cam.type = const.CAMERA_FIXED
             width, height = 1920, 1080
             img = self._get_viewer().read_pixels(width, height, depth=depth)
             if not depth:

@@ -94,6 +94,12 @@ class DobotEnv(robot_env.RobotEnv):
         # print(clutterPos,'clutter')
         return ret-clutterNumber
 
+    def set_subgoal(self, name, action):
+        site_id = self.sim.model.site_name2id(name)
+        sites_offset = (self.sim.data.site_xpos - self.sim.model.site_pos).copy()
+        self.sim.model.site_pos[site_id] = action - sites_offset[0]
+        self.sim.model.site_rgba[site_id][3] = 1
+
     # RobotEnv methods
     # ----------------------------
 

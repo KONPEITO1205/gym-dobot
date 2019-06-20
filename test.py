@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 #env = gym.make('DobotHRLPendulum-v1')
-env = gym.make('FetchReach-v1')
+env = gym.make('FetchPickAndPlace-v1')
 #env = gym.make('CartPole-v0')
 
 
@@ -15,13 +15,13 @@ while True:
 	time.sleep(1)
 	for i in range(90):
 		import time
-		if i%9 == 0:
-			time.sleep(.5)
+		# if i%9 == 0:
+		# 	time.sleep(.5)
 			# temp = -temp
 		env.render()
 		# img = env.env.capture(depth=False)
 		xx = env.action_space.sample()
-		xx[:2] = temp * 0.1
+		# xx[:2] = temp * 0.1
 		obs, _, _, _ = env.step(xx)
 		# img = obs['observation'][9:].reshape((50,50,3))
 		# cv2.imwrite('./images/test'+str(i)+'.png',img)
