@@ -63,15 +63,16 @@ class DobotHRLEnv(robot_env.RobotEnv):
         self.model_path = model_path
         self.count = 0
 
-        if "Pick" in self.__class__.__name__ or "Clear" in self.__class__.__name__:
-            self.polygons = [Polygon([(0.604,0.653),(0.604,0.717),(0.768,0.717),(0.768,0.800),
-                (0.832,0.800),(0.832,0.717),(0.996,0.717),(0.996,0.653),
-                (0.832,0.653),(0.832,0.572),(0.768,0.572),(0.768,0.653)])]
-        elif "Maze" in self.__class__.__name__:
-            self.polygons = [Polygon([(0.699,0.803),(0.763,0.803),(0.763,0.627),(0.699,0.627)]),
-                            Polygon([(0.836,0.567),(0.900,0.567),(0.900,0.743),(0.836,0.743)])]
-        else:
-            self.polygons = None
+        # if "Pick" in self.__class__.__name__ or "Clear" in self.__class__.__name__:
+        #     self.polygons = [Polygon([(0.604,0.653),(0.604,0.717),(0.768,0.717),(0.768,0.800),
+        #         (0.832,0.800),(0.832,0.717),(0.996,0.717),(0.996,0.653),
+        #         (0.832,0.653),(0.832,0.572),(0.768,0.572),(0.768,0.653)])]
+        # elif "Maze" in self.__class__.__name__:
+        #     self.polygons = [Polygon([(0.699,0.803),(0.763,0.803),(0.763,0.627),(0.699,0.627)]),
+        #                     Polygon([(0.836,0.567),(0.900,0.567),(0.900,0.743),(0.836,0.743)])]
+        # else:
+        #     self.polygons = None
+        self.polygons = None
 
 
         super(DobotHRLEnv, self).__init__(
@@ -248,8 +249,8 @@ class DobotHRLEnv(robot_env.RobotEnv):
         # cv2.imwrite('./images/test'+str(self.count)+'.png',cv2.cvtColor(img, cv2.COLOR_RGB2BGR)[:,:])
         # image = self.capture()
         obs = np.concatenate([
-            grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, object_rot.ravel(),
-            object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
+            grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, #object_rot.ravel(),
+            #object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
         ])
 
         # obs = np.concatenate([
@@ -348,10 +349,23 @@ class DobotHRLEnv(robot_env.RobotEnv):
         # print(self.sim.data.body_xpos[id1])
         # # self.sim.data.body_xpos[id1][1] = 1
         # print(self.sim.data.qpos)
-        x1_left = np.random.uniform(0.615, 0.98)
-        y1_left = np.random.uniform(0.65, 0.787)
-        x1_right = np.random.uniform(0.65, 0.98)
-        y1_right = np.random.uniform(0.65, 0.787)
+        x1_left = 0
+        x1_right = 0
+        y1_left = 0
+        y1_right = 0
+        while np.abs(x1_left - x1_right) < 0.04:
+            x1_left = np.random.uniform(0.615, 0.98)
+            y1_left = np.random.uniform(0.65, 0.72)
+            x1_right = np.random.uniform(0.615, 0.98)
+            y1_right = np.random.uniform(0.65, 0.72)
+        self.goal = [x1_left, y1_left, 0.148]
+
+        # x_width = 0.04
+        # y_width = 0.04
+
+        self.polygons = [Polygon([(x1_left,y1_left),(x1_left+0.04,y1_left),(x1_left,y1_left+0.04),(x1_left+0.04,y1_left+0.04)]),
+                        Polygon([(x1_right,y1_right),(x1_right+0.04,y1_right),(x1_right,y1_right+0.04),(x1_right+0.04,y1_right+0.04)])]
+
         object_qpos_left = self.sim.data.get_joint_qpos('leftwall')
         object_qpos_left[0] = x1_left
         object_qpos_left[1] = y1_left
@@ -423,7 +437,7 @@ class DobotHRLEnv(robot_env.RobotEnv):
                 if self.polygons:
                     for poly in self.polygons:
                         if poly.contains(point):
-                            # print("Retrying")
+                            print("Retrying")
                             valid = False
                             break
             self.sim.data.set_joint_qpos('object0:joint', object_qpos)
@@ -501,6 +515,21 @@ class DobotHRLEnv(robot_env.RobotEnv):
         if self.has_object:
             if self.target_in_the_air and self.np_random.uniform() < 1.0:
                 goal[2] = 0.148#self.np_random.uniform(0.028, 0.148)
+            goal[:2] = [0.75, 0.68]
+            '''
+            goal_ranges:
+            low = np.array([0.62,0.586])
+            up = np.array([0.98,0.784])
+
+            x:[0.62, 0.98], diff=(0.18), offset=(0.8)
+            y:[0.586, 0.784], diff=(0.1), offset=(0.685)
+            z:[0.025, 0.148],  diff=(0.615), offset=(0.64)
+
+            self.max_u = [0.18, 0.1, 0]
+            self.action_offset = [0.8, 0.685, 0.025]
+            u = self.action_offset + (self.max_u * u )
+
+            '''
         else:
             goal[2] = self.np_random.uniform(0.028, 0.148)
 

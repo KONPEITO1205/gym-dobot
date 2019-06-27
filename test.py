@@ -4,17 +4,15 @@ import cv2
 import numpy as np
 
 #env = gym.make('DobotHRLPendulum-v1')
-env = gym.make('FetchPickAndPlace-v1')
+# env = gym.make('FetchPickAndPlace-v1')
+env = gym.make('DobotHRLPush-v1')
 #env = gym.make('CartPole-v0')
 
 
 while True:
 	env.reset()
-	temp = 1
-	import time
-	time.sleep(1)
+	# temp = 1
 	for i in range(90):
-		import time
 		# if i%9 == 0:
 		# 	time.sleep(.5)
 			# temp = -temp

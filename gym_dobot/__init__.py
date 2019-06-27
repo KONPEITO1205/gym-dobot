@@ -46,14 +46,14 @@ register(
     id='DobotHRLPush{}-v1'.format(suffix),
     entry_point='gym_dobot.envs:DobotHRLPushEnv',
     kwargs=kwargs,
-    max_episode_steps=130,
+    max_episode_steps=800,
 )
 
 register(
     id='DobotHRLMaze{}-v1'.format(suffix),
     entry_point='gym_dobot.envs:DobotHRLMazeEnv',
     kwargs=kwargs,
-    max_episode_steps=130,
+    max_episode_steps=800,
 )
 
 register(
