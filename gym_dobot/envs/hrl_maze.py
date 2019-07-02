@@ -15,5 +15,5 @@ class DobotHRLMazeEnv(hrl_env.DobotHRLEnv, utils.EzPickle):
             gripper_extra_height=0.0, target_in_the_air=False, target_offset=0.0,
             obj_range=0.185, target_range=0.2, distance_threshold=0.05,
             initial_qpos=initial_qpos, reward_type=reward_type,
-            rand_dom=rand_dom,unity_remote=unity_remote, randomize=True)
+            rand_dom=rand_dom,unity_remote=unity_remote, randomize=True, image_obs=True)
         utils.EzPickle.__init__(self)

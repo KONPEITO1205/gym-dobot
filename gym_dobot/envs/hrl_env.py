@@ -28,7 +28,7 @@ class DobotHRLEnv(robot_env.RobotEnv):
     def __init__(
         self, model_path, n_substeps, gripper_extra_height, block_gripper,
         has_object, target_in_the_air, target_offset, obj_range, target_range,
-        distance_threshold, initial_qpos, reward_type,rand_dom,unity_remote, randomize=False,
+        distance_threshold, initial_qpos, reward_type,rand_dom,unity_remote, randomize=False, image_obs=False,
     ):
         """Initializes a new DobotHRL environment.
 
@@ -62,6 +62,7 @@ class DobotHRLEnv(robot_env.RobotEnv):
         self.randomize = randomize
         self.model_path = model_path
         self.count = 0
+        self.image_obs = image_obs
 
         # if "Pick" in self.__class__.__name__ or "Clear" in self.__class__.__name__:
         #     self.polygons = [Polygon([(0.604,0.653),(0.604,0.717),(0.768,0.717),(0.768,0.800),
@@ -210,6 +211,7 @@ class DobotHRLEnv(robot_env.RobotEnv):
 
         # self.render()
         # -------------------------------------------------------------------
+        # RGB Image
         # import cv2
         # blackBox = grip_pos
         # redCircle = self.goal
@@ -244,19 +246,60 @@ class DobotHRLEnv(robot_env.RobotEnv):
 
         # image = cv2.resize(img, (50,50))
         # image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)[:,:]
-        # -------------------------------------------------------------------
-        
-        # cv2.imwrite('./images/test'+str(self.count)+'.png',cv2.cvtColor(img, cv2.COLOR_RGB2BGR)[:,:])
-        # image = self.capture()
-        obs = np.concatenate([
-            grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, #object_rot.ravel(),
-            #object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
-        ])
+        # # -------------------------------------------------------------------
 
+        # -------------------------------------------------------------------
+        if self.image_obs:
+            import cv2
+            blackBox = grip_pos
+            redCircle = self.goal
+            blueBox = object_pos
+            height = 273 
+            width = 467
+            imgGripper = np.zeros((height,width), np.uint8)
+            imgBlock = np.zeros((height,width), np.uint8)
+            imgGoal = np.zeros((height,width), np.uint8)
+            half_block_len = int(38/2)
+            gripper_len = 12
+            sphere_rad = 18
+            # Mark the block position
+            mapBlue = self.map_cor(blueBox)
+            xx = int(mapBlue[0])
+            yy = int(mapBlue[1])
+            imgBlock[xx-half_block_len:xx+half_block_len,yy-half_block_len:yy+half_block_len] = 255
+
+            # Mark the sphere position
+            mapRed = self.map_cor(redCircle)
+            xx = int(mapRed[0])
+            yy = int(mapRed[1])
+            cv2.circle(imgGoal,(yy,xx), 16, (255), -1)
+
+            # Mark the gripper position
+            mapBlack = self.map_cor(blackBox)
+            xx = int(mapBlack[0])
+            yy = int(mapBlack[1])
+            imgGripper[xx-gripper_len:xx+gripper_len,yy-gripper_len:yy+gripper_len] = (255)
+            image = np.dstack((imgGripper, imgBlock, imgGoal))
+
+            image = cv2.resize(image, (50,50))
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)[:,:]
+            obs = image.ravel()
+        else:
+            obs = np.concatenate([
+                grip_pos, object_pos.ravel(), object_rel_pos.ravel(), image.ravel(), #object_rot.ravel(),
+                # object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
+                ])
+        # -------------------------------------------------------------------
+
+
+        # cv2.imwrite('./images/test'+str(self.count)+'.png',cv2.cvtColor(image, cv2.COLOR_RGB2BGR)[:,:])
+        # self.count += 1
+        # image = self.capture()
         # obs = np.concatenate([
-        #     grip_pos, object_pos.ravel(), object_rel_pos.ravel(), image.ravel(), #object_rot.ravel(),
-        #     # object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
+        #     grip_pos, object_pos.ravel(), object_rel_pos.ravel(), gripper_state, #object_rot.ravel(),
+        #     #object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
         # ])
+
 
         return {
             'observation': obs.copy(),

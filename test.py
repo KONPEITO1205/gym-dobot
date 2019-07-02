@@ -5,7 +5,7 @@ import numpy as np
 
 #env = gym.make('DobotHRLPendulum-v1')
 # env = gym.make('FetchPickAndPlace-v1')
-env = gym.make('DobotPickAndPlace-v1')
+env = gym.make('DobotHRLPush-v1')
 #env = gym.make('CartPole-v0')
 
 
