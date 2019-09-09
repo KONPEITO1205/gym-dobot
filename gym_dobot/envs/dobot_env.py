@@ -286,7 +286,7 @@ class DobotEnv(robot_env.RobotEnv):
                 goal[2] = 0.02#0.148#self.np_random.uniform(0.028, 0.148)
         else:
             goal[2] = 0.02#self.np_random.uniform(0.028, 0.148)
-        goal[:2] = [0.75, 0.68]
+        # goal[:2] = [0.75, 0.68]
 
         return goal.copy()
         

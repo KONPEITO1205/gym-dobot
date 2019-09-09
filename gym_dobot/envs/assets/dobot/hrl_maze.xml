@@ -28,18 +28,18 @@
 
 		<body name="leftwall" pos="0.731 0.778 0.025" euler = "0 0 0">
 			<joint name="leftwall" type="free" damping="0.01"></joint>
-			<geom pos="0 0 0"  mass = "100000" class="wall"/>
-			<geom pos="0 -0.032 0"  mass = "100000" class="wall"/>
-			<geom pos="0 -0.064 0"  mass = "100000" class="wall"/>
+			<geom pos="0 0 0"  mass = "1000000" class="wall"/>
+			<geom pos="0 -0.032 0"  mass = "1000000" class="wall"/>
+			<geom pos="0 -0.064 0"  mass = "1000000" class="wall"/>
 			<!-- <geom pos="0 -0.096 0"  mass = "100000" class="wall"/> -->
 			<!-- <geom pos="0 -0.128 0"  mass = "100000" class="wall"/> -->
 		</body>
 
 		<body name="rightwall" pos="0.868 0.583 0.025">
 			<joint name="rightwall" type="free" damping="0.01"></joint>
-			<geom pos="0 0 0"  mass = "100000" class="wall"/>
-			<geom pos="0 0.032 0"  mass = "100000" class="wall"/>
-			<geom pos="0 0.064 0"  mass = "100000" class="wall"/>
+			<geom pos="0 0 0"  mass = "1000000" class="wall"/>
+			<geom pos="0 0.032 0"  mass = "1000000" class="wall"/>
+			<geom pos="0 0.064 0"  mass = "1000000" class="wall"/>
 			<!-- <geom pos="0 0.096 0"  mass = "100000" class="wall"/> -->
 			<!-- <geom pos="0 0.128 0"  mass = "100000" class="wall"/> -->
 		</body>

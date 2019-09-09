@@ -249,46 +249,55 @@ class DobotHRLEnv(robot_env.RobotEnv):
         # # -------------------------------------------------------------------
 
         # -------------------------------------------------------------------
-        if self.image_obs:
-            import cv2
-            blackBox = grip_pos
-            redCircle = self.goal
-            blueBox = object_pos
-            height = 273 
-            width = 467
-            imgGripper = np.zeros((height,width), np.uint8)
-            imgBlock = np.zeros((height,width), np.uint8)
-            imgGoal = np.zeros((height,width), np.uint8)
-            half_block_len = int(38/2)
-            gripper_len = 12
-            sphere_rad = 18
-            # Mark the block position
-            mapBlue = self.map_cor(blueBox)
-            xx = int(mapBlue[0])
-            yy = int(mapBlue[1])
-            imgBlock[xx-half_block_len:xx+half_block_len,yy-half_block_len:yy+half_block_len] = 255
+        # if self.image_obs:
+        #     import cv2
+        #     blackBox = grip_pos.copy()
+        #     redCircle = self.goal.copy()
+        #     blueBox = object_pos.copy()
+        #     height = 273 
+        #     width = 467
+        #     imgGripper = np.zeros((height,width), np.uint8)
+        #     imgBlock = np.zeros((height,width), np.uint8)
+        #     imgGoal = np.zeros((height,width), np.uint8)
+        #     imgBlock[:] = 120
+        #     half_block_len = int(38/2)
+        #     gripper_len = 12
+        #     sphere_rad = 18
+        #     # Mark the block position
+        #     mapBlue = self.map_cor(blueBox)
+        #     xx = int(mapBlue[0])
+        #     yy = int(mapBlue[1])
+        #     imgBlock[xx-half_block_len:xx+half_block_len,yy-half_block_len:yy+half_block_len] = 255
 
-            # Mark the sphere position
-            mapRed = self.map_cor(redCircle)
-            xx = int(mapRed[0])
-            yy = int(mapRed[1])
-            cv2.circle(imgGoal,(yy,xx), 16, (255), -1)
+        #     # Mark the sphere position
+        #     mapRed = self.map_cor(redCircle)
+        #     xx = int(mapRed[0])
+        #     yy = int(mapRed[1])
+        #     cv2.circle(imgGoal,(yy,xx), 16, (255), -1)
 
-            # Mark the gripper position
-            mapBlack = self.map_cor(blackBox)
-            xx = int(mapBlack[0])
-            yy = int(mapBlack[1])
-            imgGripper[xx-gripper_len:xx+gripper_len,yy-gripper_len:yy+gripper_len] = (255)
-            image = np.dstack((imgGripper, imgBlock, imgGoal))
+        #     # Mark the gripper position
+        #     mapBlack = self.map_cor(blackBox)
+        #     xx = int(mapBlack[0])
+        #     yy = int(mapBlack[1])
+        #     imgGripper[xx-gripper_len:xx+gripper_len,yy-gripper_len:yy+gripper_len] = (255)
+        #     image = np.dstack((imgGripper, imgBlock, imgGoal))
 
-            image = cv2.resize(image, (50,50))
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)[:,:]
-            obs = image.ravel()
+        #     # image = cv2.resize(image, (50,50))
+        #     # image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)[:,:]
+        #     obs = image.ravel()
+        # else:
+
+        # Position of the walls:
+        leftwall_pos = self.sim.data.get_joint_qpos('leftwall')[:2]
+        rightwall_pos = self.sim.data.get_joint_qpos('rightwall')[:2]
+        if not self.randomize:
+            obs = np.concatenate([grip_pos, object_pos.ravel(), object_rel_pos.ravel()])
         else:
-            obs = np.concatenate([
-                grip_pos, object_pos.ravel(), object_rel_pos.ravel(), image.ravel(), #object_rot.ravel(),
-                # object_velp.ravel(), object_velr.ravel(), grip_velp, gripper_vel,
-                ])
+            obs = np.concatenate([grip_pos, object_pos.ravel(), object_rel_pos.ravel(), leftwall_pos, rightwall_pos])
+
+        # o_pixel = self.get_image_obs(grip_pos, self.goal)
+        # cv2.imshow('u',o_pixel.reshape(50,50,3))
+        # cv2.waitKey(0)
         # -------------------------------------------------------------------
 
 
@@ -307,16 +316,93 @@ class DobotHRLEnv(robot_env.RobotEnv):
             'desired_goal': self.goal.copy(),
         }
 
-    def map_cor(self, pos,X1=0.0,X2=273.0,Y1=0.,Y2=467.0,x1=0.8,x2=0.57,y1=0.6,y2=1.0):
-        if pos[0] > 1:
-            return np.array([193., 180.])
-        y = pos[0]
-        x = pos[1]
+    def get_image_obs(self, obs, goal):
+        is_dobot = 1#'Dobot' in self.env
+        grip_pos = obs[:3]
+        goal_pos = goal
+        object_pos = []
+        if obs.size > 3:
+            object_pos = obs[3:6]
+        blackBox = grip_pos.copy()
+        redCircle = goal_pos.copy()
+        blueBox = object_pos.copy()
+        # print(blackBox,'blackBox')
+        height = 50#273
+        width = 50#467
+        imgGripper = np.zeros((height,width), np.uint8)
+        imgBlock = np.zeros((height,width), np.uint8)
+        imgGoal = np.zeros((height,width), np.uint8)
+        # half_block_len = int(38/2)
+        # gripper_len = 15
+        # sphere_rad = 18
+        half_block_len = 2
+        gripper_len = 2
+        sphere_rad = 2
+        # Mark the block position
+        if len(blueBox) != 0:
+            if is_dobot:
+                mapBlue = self.map_cor_dobot(blueBox)
+            else:    
+                mapBlue = self.map_cor(blueBox)
+            xx = int(mapBlue[0])
+            yy = int(mapBlue[1])
+            imgBlock[xx-half_block_len:xx+half_block_len,yy-half_block_len:yy+half_block_len] = 255
+
+        # Mark the sphere position
+        if is_dobot:
+            mapRed = self.map_cor_dobot(redCircle)
+        else:
+            mapRed = self.map_cor(redCircle)
+        xx = int(mapRed[0])
+        yy = int(mapRed[1])
+        cv2.circle(imgGoal,(yy,xx), sphere_rad, (255), -1)
+
+        # Mark the gripper position
+        if is_dobot:
+            mapBlack = self.map_cor_dobot(blackBox)
+        else:
+            mapBlack = self.map_cor(blackBox)
+        xx = int(mapBlack[0])
+        yy = int(mapBlack[1])
+        imgGripper[xx-gripper_len:xx+gripper_len,yy-gripper_len:yy+gripper_len] = (255)
+        image = np.dstack((imgGripper, imgBlock, imgGoal))
+        # image = cv2.resize(image, (50,50))
+        image = image.ravel()
+        return image
+
+    def map_cor(self, pos, X1=0.0,X2=50.0,Y1=0.,Y2=50.0,x1=1.05,x2=1.53,y1=0.44,y2=1.06):
+        # if pos[0] > 1:
+        #     return np.array([193., 180.])
+        x = pos[0]
+        y = pos[1]
+        if x<1.05 or x>1.53 or y<0.44 or y>1.06:
+            return np.array([290,480])
+
         X = X1 + ( (x-x1) * (X2-X1) / (x2-x1) )
         Y = Y1 + ( (y-y1) * (Y2-Y1) / (y2-y1) )
-        # X=X2+((X1-X2)/x2)*x
-        # Y=Y2+((Y1-Y2)/y2)*y
         return(np.array([X,Y]))
+
+    def map_cor_dobot(self, pos, X1=0.0,X2=50.0,Y1=0.,Y2=50.0,x2=0.575,x1=0.795,y1=0.6,y2=1):
+                            # pos, X1=0.0,X2=273.0,Y1=0.,Y2=467.0,x1=0.784,x2=0.586,y1=0.62,y2=0.98):
+        x = pos[1]
+        y = pos[0]
+        if x<0.57 or x>0.8 or y<0.55 or y>1.05:
+            return np.array([290,480])
+
+        X = X1 + ( (x-x1) * (X2-X1) / (x2-x1) )
+        Y = Y1 + ( (y-y1) * (Y2-Y1) / (y2-y1) )
+        return(np.array([X,Y]))
+
+    # def map_cor(self, pos,X1=0.0,X2=273.0,Y1=0.,Y2=467.0,x1=0.784,x2=0.586,y1=0.62,y2=0.98):
+    #     if pos[0] > 1:
+    #         return np.array([193., 180.])
+    #     y = pos[0]
+    #     x = pos[1]
+    #     X = X1 + ( (x-x1) * (X2-X1) / (x2-x1) )
+    #     Y = Y1 + ( (y-y1) * (Y2-Y1) / (y2-y1) )
+    #     # X=X2+((X1-X2)/x2)*x
+    #     # Y=Y2+((Y1-Y2)/y2)*y
+    #     return(np.array([X,Y]))
 
     def _viewer_setup(self):
         body_id = self.sim.model.body_name2id('dobot:gripper_link')
@@ -492,6 +578,17 @@ class DobotHRLEnv(robot_env.RobotEnv):
         if self.randomize:
             # Randomize the walls to make it a dynamic environment
             self.randomize_environ()
+        else:
+            # To make the walls not lie on the table
+            object_qpos_left = self.sim.data.get_joint_qpos('leftwall')
+            object_qpos_right = self.sim.data.get_joint_qpos('rightwall')
+            object_qpos_left[0] = 50
+            object_qpos_left[1] = 50
+
+            object_qpos_right[0] = 50
+            object_qpos_right[1] = 50
+            self.sim.data.set_joint_qpos('leftwall', object_qpos_left)
+            self.sim.data.set_joint_qpos('rightwall', object_qpos_right)
             # if self.model_path.startswith('/'):
             #     fullpath = self.model_path
             # else:
@@ -558,11 +655,10 @@ class DobotHRLEnv(robot_env.RobotEnv):
         if self.has_object:
             if self.target_in_the_air and self.np_random.uniform() < 1.0:
                 goal[2] = 0.148#self.np_random.uniform(0.028, 0.148)
-            goal[:2] = [0.75, 0.68]
             '''
             goal_ranges:
-            low = np.array([0.62,0.586])
-            up = np.array([0.98,0.784])
+            low = np.array([0.61,0.58])
+            up = np.array([0.99,0.79])
 
             x:[0.62, 0.98], diff=(0.18), offset=(0.8)
             y:[0.586, 0.784], diff=(0.1), offset=(0.685)
@@ -574,7 +670,9 @@ class DobotHRLEnv(robot_env.RobotEnv):
 
             '''
         else:
-            goal[2] = self.np_random.uniform(0.028, 0.148)
+            goal[2] = 0.02#self.np_random.uniform(0.028, 0.148)
+            # x2=0.58,x1=0.79,y1=0.61,y2=0.975):
+            # goal[:2] = np.array([0.62, 0.784])
 
         return goal.copy()
 
