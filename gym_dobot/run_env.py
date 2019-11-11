@@ -1,7 +1,7 @@
 import gym
 import click
 import gym_dobot.envs as envs
-from scipy.misc import imsave
+#from scipy.misc import imsave
 import numpy as np
 
 
