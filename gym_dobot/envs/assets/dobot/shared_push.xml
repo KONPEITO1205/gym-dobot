@@ -15,6 +15,9 @@
         <texture name="base_blue_tex" file="base_blue.png" type="2d"></texture>
         <texture name="base_green_tex" file="base_green.png" type="2d"></texture>
         <texture name="gripper_tex" file="gripper.png" type="2d"></texture>
+        <!--  Cherry textures  -->
+        <texture name="cherry_red" file="cherry.png"></texture>
+        <texture name="stem_green" file="stem.png"></texture>
 
         <material name="table_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.6 0.6 0.6 1" texture="base_tex"></material>
         <material name="floor_mat" specular="0" shininess="0.5" reflectance="0" rgba="1 1 1 1" texture="base_blue_tex"></material>
@@ -32,6 +35,9 @@
         <material name="dobot_mat" shininess="0.03" specular="0.4" rgba ="1 1 1 0"></material>
         <material name="arm_mat" shininess="0.03" specular="0.4" texture="arm_tex"></material>
         <material name="gripper_mat" shininess="0.03" specular="0.4" texture="gripper_tex"></material>
+        <!--  Cherry materials  -->
+        <material name="cherry_mat" specular="0" shininess="0.5" reflectance="0" rgba="1 1 1 1" texture="cherry_red"></material>
+        <material name="stem_mat" specular="0" shininess="0.5" reflectance="0" rgba="1 1 1 1" texture="stem_green"></material>
 
         <mesh file="fpart1.stl" name="dobot:rear_arm_link" scale="0.002 0.002 0.002"></mesh>
 		<mesh file="fpart2.stl" name="dobot:front_arm_link" scale="0.002 0.002 0.002"></mesh>
