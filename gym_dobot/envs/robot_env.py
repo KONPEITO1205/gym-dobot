@@ -83,6 +83,8 @@ class RobotEnv(gym.GoalEnv):
         reward = self.compute_reward(obs['achieved_goal'], self.goal, info)#, obsTemp, params)
         self.episodeInfo.append(info)
         self.episodeObs.append(obs)
+        #print(self.sim.data.get_site_xpos('target0'))  ## ここを色々変えてゴール地点の座標を変更できるようにする
+        #print(self.sim.data.get_body_xpos('object0'))
         return obs, reward, done, info
 
     def reset(self,goal=None):
@@ -101,6 +103,8 @@ class RobotEnv(gym.GoalEnv):
             self.goal = np.array(goal)
         obs = self._get_obs()
         self.episodeObs.append(obs)
+        site_id = self.sim.model.site_name2id('site:object0')
+        self.sim.model.body_pos[site_id] = (0.9, 0.75, 1.0)
         return obs
 
     def close(self):

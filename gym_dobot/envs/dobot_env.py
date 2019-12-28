@@ -225,8 +225,10 @@ class DobotEnv(robot_env.RobotEnv):
                 self.modder.rand_all(name)
 
             #Camera
-            pos = np.array([0,-1,1]) + self.np_random.uniform(-0.1,0.1,size=3)
-            self.cam_modder.set_pos('camera0',pos)
+            # pos = np.array([0,-1,1]) + self.np_random.uniform(-0.1,0.1,size=3)
+            pos = np.array([0, 0, 1.0]) + self.np_random.uniform(-0.1,0.1,size=3)
+            # self.cam_modder.set_pos('camera0',pos)
+            self.cam_modder.set_pos('webcam', pos)
 
             #Light
             self.light_modder.set_castshadow('light0',1)
@@ -320,9 +322,10 @@ class DobotEnv(robot_env.RobotEnv):
         if self.viewer == None:
             pass
         else:
-            self.viewer.cam.fixedcamid = 0
+            # self.viewer.cam.fixedcamid = 0
             self.viewer.cam.type = const.CAMERA_FIXED
-            width, height = 1920, 1080
+            self.viewer.cam.fixedcamid = self.cam_modder.get_camid('webcam')
+            width, height = 1680, 1050
             img = self._get_viewer().read_pixels(width, height, depth=depth)
             # print(img[:].shape)
             # # depth_image = img[:][:][1][::-1] # To visualize the depth image(depth=True)
