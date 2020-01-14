@@ -253,11 +253,21 @@ class DobotEnv(robot_env.RobotEnv):
             size = np.array([0.1580,0.100]) - 0.02
             up = pos + size
             low = pos - size
-            object_xpos = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1])])
+            #object_xpos = np.array([self.np_random.uniform(low[0],up[0]),self.np_random.uniform(low[1],up[1])])
+            if np.random.rand() >= 0.5:
+                x_ = np.random.normal(0.731, 0.04)
+            else:
+                x_ = np.random.normal(0.9, 0.02)
+            if np.random.rand() >= 0.5:
+                y_ = np.random.normal(0.643, 0.02)
+            else:
+                y_ = np.random.normal(0.725, 0.02)
+            object_xpos = np.array([x_, y_])
             object_qpos = self.sim.data.get_joint_qpos('object0:joint')
             assert object_qpos.shape == (7,)
             object_qpos[:2] = object_xpos
-            object_qpos[2] = 0.032
+            object_qpos[2] = 0.2
+            object_qpos[3:] = list(1*np.random.rand(4)-0.5)
             self.sim.data.set_joint_qpos('object0:joint', object_qpos)
             
 

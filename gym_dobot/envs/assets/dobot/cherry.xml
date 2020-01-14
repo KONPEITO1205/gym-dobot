@@ -1,6 +1,8 @@
 <mujoco model="cherry">
     <!-- ======= Cherry ======= -->
-    <body name="object0" pos="0.9 0.75 0.5" euler="0.3 -0.3 0">
+    <!--body name="object0" pos="0.9 0.75 0.5" euler="0.3 -0.3 0"-->
+    <!--body name="object0" pos="0.9 0.75 0.5"-->
+    <body name="object0" pos="0. 0. 0.">
         <geom mass="0.5" name="fruit_1" type="sphere" pos="0 -.022 .11" size=".015 .015" rgba="1 0 0 2" material="cherry_mat"/>
         <geom mass="0.5" name="fruit_2" type="sphere" pos="0 .022 .11" size=".015 .015" rgba="1 0 0 2" material="cherry_mat"/>
         <geom mass="0.1" name="stem_1" type="cylinder" pos="0 .01 .15" size=".003 .035" rgba="0 1 0 2" euler="0.25 0 0" material="stem_mat"/>

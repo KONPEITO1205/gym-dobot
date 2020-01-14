@@ -103,8 +103,8 @@ class RobotEnv(gym.GoalEnv):
             self.goal = np.array(goal)
         obs = self._get_obs()
         self.episodeObs.append(obs)
-        site_id = self.sim.model.site_name2id('site:object0')
-        self.sim.model.body_pos[site_id] = (0.9, 0.75, 1.0)
+        site_id = self.sim.model.body_name2id('object0')
+        #self.sim.model.body_euler[site_id] = (1.0, 1.0, -5)
         return obs
 
     def close(self):
